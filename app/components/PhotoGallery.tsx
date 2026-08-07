@@ -2,6 +2,14 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+  HandFlower, HandTulip, HandCherry,
+  HandLeaf, HandClover, HandPalm, HandSun,
+  HandLeafOrange, HandMaple, HandMapleSmall,
+  HandSnowflake, HandStar, HandSnowflakeSimple,
+  HandButterfly, HandDaisy, HandMoon, HandNote, HandGift, HandSparkle,
+  HandBird, HandSunset, HandFire, HandRain, HandCloudy
+} from './hand-drawn/Decorations';
 
 interface PhotoItem {
   url: string;
@@ -11,22 +19,46 @@ interface PhotoItem {
 interface Season {
   id: string;
   name: string;
-  emoji: string;
+  emoji: React.ReactNode;
   accentColor: string;
   background: string;
-  decorations: string[];
+  decorations: React.ReactNode[];
   photos: PhotoItem[];
   particleColor: string;
 }
+
+const SpringDecorations = [
+  <HandFlower key="flower" size={32} color="#f9a8d4" />,
+  <HandTulip key="tulip" size={28} color="#ec4899" />,
+  <HandCherry key="cherry" size={24} color="#f9a8d4" />
+];
+
+const SummerDecorations = [
+  <HandLeaf key="leaf" size={32} color="#86efac" />,
+  <HandClover key="clover" size={28} color="#22c55e" />,
+  <HandPalm key="palm" size={24} color="#65a30d" />
+];
+
+const AutumnDecorations = [
+  <HandLeafOrange key="leaf" size={32} color="#f97316" />,
+  <HandMaple key="maple" size={28} color="#ea580c" />,
+  <HandMapleSmall key="maple2" size={24} color="#dc2626" />
+];
+
+const WinterDecorations = [
+  <HandSnowflake key="snow" size={32} color="#7dd3fc" />,
+  <HandStar key="star" size={28} color="#fbbf24" />,
+  <HandSnowflakeSimple key="snow2" size={24} color="#bae6fd" />
+];
 
 const seasons: Season[] = [
   {
     id: 'spring',
     name: 'Весна',
-    emoji: '🌸',
+    emoji: <HandFlower size={32} color="#f9a8d4" />,
     accentColor: '#f9a8d4',
     background: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fbcfe8 100%)',
-    decorations: ['🌸', '🌷', '🌺'],
+    decorations: SpringDecorations,
     particleColor: '#f9a8d4',
     photos: [
       { url: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400&h=400&fit=crop', caption: 'Первые цветы...' },
@@ -38,10 +70,10 @@ const seasons: Season[] = [
   {
     id: 'summer',
     name: 'Лето',
-    emoji: '☀️',
+    emoji: <HandSun size={36} color="#fbbf24" />,
     accentColor: '#86efac',
     background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%)',
-    decorations: ['🌿', '🍃', '🌴'],
+    decorations: SummerDecorations,
     particleColor: '#86efac',
     photos: [
       { url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=400&fit=crop', caption: 'Лесные тропы...' },
@@ -53,10 +85,10 @@ const seasons: Season[] = [
   {
     id: 'autumn',
     name: 'Осень',
-    emoji: '🍂',
+    emoji: <HandMaple size={32} color="#ea580c" />,
     accentColor: '#fb923c',
     background: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 50%, #fed7aa 100%)',
-    decorations: ['🍂', '🍁', '🍃'],
+    decorations: AutumnDecorations,
     particleColor: '#fb923c',
     photos: [
       { url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop', caption: 'Золотые листья...' },
@@ -68,10 +100,10 @@ const seasons: Season[] = [
   {
     id: 'winter',
     name: 'Зима',
-    emoji: '❄️',
+    emoji: <HandSnowflake size={32} color="#7dd3fc" />,
     accentColor: '#7dd3fc',
     background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%)',
-    decorations: ['❄️', '✨', '🌨️'],
+    decorations: WinterDecorations,
     particleColor: '#7dd3fc',
     photos: [
       { url: 'https://images.unsplash.com/photo-1491002052546-bf38f186af56?w=400&h=400&fit=crop', caption: 'Первый снег...' },
@@ -93,6 +125,29 @@ interface Particle {
   opacity: number;
   type: 'snowflake' | 'leaf';
 }
+
+const GalleryDecos = {
+  spring: {
+    left: [<HandButterfly key="b" size={18} color="#a78bfa" />, <HandBird key="bi" size={14} color="#60a5fa" />],
+    right: [<HandFlower key="f" size={18} color="#f9a8d4" />, <HandSparkle key="s" size={12} color="#fbbf24" />],
+    bottom: [<HandBird key="bi" size={14} color="#60a5fa" />, <HandDaisy key="d" size={12} color="#fef3c7" />],
+  },
+  summer: {
+    left: [<HandSun key="sun" size={20} color="#fbbf24" />, <HandLeaf key="l" size={14} color="#86efac" />],
+    right: [<HandBird key="bi" size={18} color="#60a5fa" />, <HandFire key="fi" size={14} color="#f97316" />],
+    bottom: [<HandSparkle key="s" size={14} color="#fef08a" />, <HandLeaf key="l2" size={12} color="#86efac" />],
+  },
+  autumn: {
+    left: [<HandMaple key="m" size={18} color="#ea580c" />, <HandSunset key="su" size={14} color="#f97316" />],
+    right: [<HandLeafOrange key="lo" size={18} color="#f97316" />, <HandNote key="n" size={14} color="#fef08a" />],
+    bottom: [<HandMapleSmall key="ms" size={14} color="#dc2626" />, <HandSparkle key="s" size={12} color="#fbbf24" />],
+  },
+  winter: {
+    left: [<HandSnowflake key="snow" size={18} color="#7dd3fc" />, <HandMoon key="moon" size={14} color="#fef08a" />],
+    right: [<HandCloudy key="c" size={18} color="#d1d5db" />, <HandRain key="r" size={14} color="#7dd3fc" />],
+    bottom: [<HandMoon key="moon2" size={14} color="#fef08a" />, <HandSnowflakeSimple key="s2" size={12} color="#bae6fd" />],
+  },
+};
 
 export default function PhotoGallery({ onSeasonChange }: { onSeasonChange?: (bg: string) => void }) {
   const [currentSeason, setCurrentSeason] = useState(0);
@@ -126,21 +181,6 @@ export default function PhotoGallery({ onSeasonChange }: { onSeasonChange?: (bg:
       ctx.moveTo(0, 0);
       ctx.lineTo(Math.cos(angle) * size, Math.sin(angle) * size);
       ctx.stroke();
-
-      for (let j = 1; j <= 3; j++) {
-        const branchPos = size * j / 4;
-        const branchAngle1 = angle + Math.PI / 6;
-        const branchAngle2 = angle - Math.PI / 6;
-        const branchLen = size / 4;
-        ctx.beginPath();
-        ctx.moveTo(Math.cos(angle) * branchPos, Math.sin(angle) * branchPos);
-        ctx.lineTo(Math.cos(branchAngle1) * branchLen + Math.cos(angle) * branchPos, Math.sin(branchAngle1) * branchLen + Math.sin(angle) * branchPos);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(Math.cos(angle) * branchPos, Math.sin(angle) * branchPos);
-        ctx.lineTo(Math.cos(branchAngle2) * branchLen + Math.cos(angle) * branchPos, Math.sin(branchAngle2) * branchLen + Math.sin(angle) * branchPos);
-        ctx.stroke();
-      }
     }
 
     ctx.restore();
@@ -165,19 +205,19 @@ export default function PhotoGallery({ onSeasonChange }: { onSeasonChange?: (bg:
     if (!canvas) return;
 
     const particles: Particle[] = [];
-    const count = 40;
+    const count = 20;
 
     for (let i = 0; i < count; i++) {
       const type = Math.random() > 0.5 ? 'snowflake' : 'leaf';
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        size: Math.random() * 6 + 3,
-        speedY: Math.random() * 1 + 0.3,
-        speedX: (Math.random() - 0.5) * 0.5,
+        size: Math.random() * 4 + 2,
+        speedY: Math.random() * 0.6 + 0.2,
+        speedX: (Math.random() - 0.5) * 0.3,
         rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 2,
-        opacity: Math.random() * 0.4 + 0.2,
+        rotationSpeed: (Math.random() - 0.5) * 1.2,
+        opacity: Math.random() * 0.2 + 0.08,
         type,
       });
     }
@@ -274,9 +314,17 @@ export default function PhotoGallery({ onSeasonChange }: { onSeasonChange?: (bg:
     }
   };
 
+  const decos = GalleryDecos[season.id as keyof typeof GalleryDecos];
+
   return (
     <div className="gallery">
       <canvas ref={canvasRef} className="particle-canvas" />
+      
+      <div className="gallery-deco">
+        <div className="deco-left">{decos.left}</div>
+        <div className="deco-right">{decos.right}</div>
+        <div className="deco-bottom">{decos.bottom}</div>
+      </div>
 
       <motion.div
         className="season-indicator"
@@ -309,9 +357,9 @@ export default function PhotoGallery({ onSeasonChange }: { onSeasonChange?: (bg:
 
         <div className="photos-container">
           <div className="decorations-left">
-            {season.decorations.map((emoji, i) => (
-              <span key={i} className="decoration" style={{ fontSize: `${1.5 + i * 0.4}rem` }}>
-                {emoji}
+            {season.decorations.map((deco, i) => (
+              <span key={i} className="decoration" style={{ fontSize: `${1.3 + i * 0.25}rem` }}>
+                {deco}
               </span>
             ))}
           </div>
@@ -349,9 +397,9 @@ export default function PhotoGallery({ onSeasonChange }: { onSeasonChange?: (bg:
           </div>
 
           <div className="decorations-right">
-            {season.decorations.map((emoji, i) => (
-              <span key={i + 10} className="decoration" style={{ fontSize: `${1.6 - i * 0.3}rem` }}>
-                {emoji}
+            {season.decorations.map((deco, i) => (
+              <span key={i + 10} className="decoration" style={{ fontSize: `${1.35 - i * 0.15}rem` }}>
+                {deco}
               </span>
             ))}
           </div>

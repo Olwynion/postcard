@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode, useEffect, useState } from 'react';
+import ParticlesCanvas from './ParticlesCanvas';
 
 interface TabContentProps {
   tab: 'moments' | 'quotes' | 'love';
@@ -11,16 +12,19 @@ interface TabContentProps {
 
 const tabStyles = {
   moments: {
-    headerBg: 'rgba(255,255,255,0.8)',
-    name: 'Моменты 📸',
+    headerBg: 'rgba(255,255,255,0.9)',
+    name: 'Моменты',
+    emoji: '📷',
   },
   quotes: {
-    headerBg: 'rgba(255,255,255,0.85)',
-    name: 'Цитаты 💬',
+    headerBg: 'rgba(255,255,255,0.95)',
+    name: 'Цитаты',
+    emoji: '💌',
   },
   love: {
-    headerBg: 'rgba(255,255,255,0.85)',
-    name: 'Для тебя 💝',
+    headerBg: 'rgba(255,255,255,0.95)',
+    name: 'Для тебя',
+    emoji: '❤️',
   },
 };
 
@@ -28,6 +32,30 @@ const defaultBackgrounds = {
   moments: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fbcfe8 100%)',
   quotes: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%)',
   love: 'linear-gradient(135deg, #fff5f5 0%, #ffe4e6 50%, #fecdd3 100%)',
+};
+
+const emojiSets = {
+  moments: ['🌸', '⭐', '🌷', '🦋', '✨', '🌺', '🌹', '💕', '🌻'],
+  quotes: ['💌', '⭐', '📝', '🌹', '🦋', '💫', '💖', '💘', '✨'],
+  love: ['❤️', '💕', '💗', '💝', '🌹', '💖', '💘', '✨', '💕'],
+};
+
+const decorMap = {
+  moments: {
+    left: ['🌸', '⭐', '🌷'],
+    right: ['🦋', '✨', '🌺'],
+    bottom: ['💕', '🌹'],
+  },
+  quotes: {
+    left: ['💌', '⭐', '📝'],
+    right: ['🌹', '🦋', '💫'],
+    bottom: ['💖', '💘', '✨'],
+  },
+  love: {
+    left: ['❤️', '💕', '💗'],
+    right: ['💝', '🌹', '💖'],
+    bottom: ['💋', '💘', '🌹'],
+  },
 };
 
 export default function TabContent({ tab, onBack, children, seasonBg }: TabContentProps) {
@@ -51,13 +79,25 @@ export default function TabContent({ tab, onBack, children, seasonBg }: TabConte
 
   const style = tabStyles[tab];
   const background = seasonBg || defaultBackgrounds[tab];
+  const decos = decorMap[tab];
 
-  return (
+return (
     <div
       className={`tab-container ${isVisible ? 'visible' : ''}`}
       style={{ background: background }}
     >
+      <ParticlesCanvas emojiSet={emojiSets[tab]} count={12} />
+      
+      <div className="deco-fixed deco-left-top">{decos.left[0]}</div>
+      <div className="deco-fixed deco-left-middle">{decos.left[1]}</div>
+      <div className="deco-fixed deco-left-bottom">{decos.left[2]}</div>
+      <div className="deco-fixed deco-right-top">{decos.right[0]}</div>
+      <div className="deco-fixed deco-right-middle">{decos.right[1]}</div>
+      <div className="deco-fixed deco-right-bottom">{decos.right[2]}</div>
+      <div className="deco-fixed deco-bottom-center">{decos.bottom[0]}{decos.bottom[1]}</div>
+      
       <header className="tab-header" style={{ background: style.headerBg }}>
+        <span className="tab-icon">{style.emoji}</span>
         <span className="tab-name">{style.name}</span>
       </header>
 
@@ -91,32 +131,105 @@ export default function TabContent({ tab, onBack, children, seasonBg }: TabConte
           transform: scale(1);
         }
 
+        .deco-fixed {
+          position: fixed;
+          pointer-events: none;
+          z-index: 0;
+          font-size: 1.5rem;
+          opacity: 0.25;
+          filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .deco-left-top { left: 10px; top: 18%; }
+        .deco-left-middle { left: 10px; top: 45%; }
+        .deco-left-bottom { left: 10px; top: 72%; }
+
+        .deco-right-top { right: 10px; top: 18%; }
+        .deco-right-middle { right: 10px; top: 45%; }
+        .deco-right-bottom { right: 10px; top: 72%; }
+
+        .deco-bottom-center {
+          position: fixed;
+          bottom: 28px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          gap: 16px;
+          pointer-events: none;
+          z-index: 0;
+          font-size: 1.3rem;
+          opacity: 0.3;
+        }
+
+        .tab-container.visible {
+          opacity: 1;
+          transform: scale(1);
+        }
+
+        .tab-bg-deco {
+          position: fixed;
+          inset: 0;
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        .deco-left, .deco-right {
+          position: absolute;
+          top: 50%;
+          transform: translateY(-50%);
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          opacity: 0.2;
+        }
+
+        .deco-left { left: 8px; }
+        .deco-right { right: 8px; }
+
+        .deco-bottom {
+          position: absolute;
+          bottom: 25px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          gap: 20px;
+          opacity: 0.25;
+        }
+
         .tab-header {
           position: sticky;
           top: 0;
-          padding: 24px;
+          padding: 16px 20px;
           text-align: center;
           backdrop-filter: blur(15px);
           border-bottom: 1px solid rgba(0,0,0,0.05);
           z-index: 10;
-          box-shadow: 0 4px 30px rgba(0,0,0,0.05);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+        }
+
+        .tab-icon {
+          display: flex;
         }
 
         .tab-name {
-          font-family: 'Playfair Display', 'Georgia', serif;
-          font-size: 1.6rem;
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: 1.4rem;
           font-weight: 600;
           color: #5a4a42;
-          letter-spacing: 0.03em;
         }
 
         .tab-content {
-          padding: 24px;
-          padding-bottom: 120px;
+          padding: 20px;
+          padding-bottom: 100px;
           opacity: 0;
           transform: translateY(30px) scale(0.95);
           transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
           transition-delay: 0.15s;
+          position: relative;
+          z-index: 1;
         }
 
         .tab-content.show {
@@ -126,10 +239,10 @@ export default function TabContent({ tab, onBack, children, seasonBg }: TabConte
 
         .back-button {
           position: fixed;
-          bottom: 32px;
-          right: 32px;
-          width: 60px;
-          height: 60px;
+          bottom: 28px;
+          right: 28px;
+          width: 52px;
+          height: 52px;
           border-radius: 50%;
           background: linear-gradient(135deg, #fff, #fef9f3);
           border: none;
@@ -137,7 +250,7 @@ export default function TabContent({ tab, onBack, children, seasonBg }: TabConte
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+          box-shadow: 0 6px 25px rgba(0,0,0,0.12);
           transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
           color: #6b5b4f;
           z-index: 100;
@@ -152,8 +265,8 @@ export default function TabContent({ tab, onBack, children, seasonBg }: TabConte
         }
 
         .back-button:hover {
-          transform: scale(1.15) rotate(-10deg);
-          box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+          transform: scale(1.1) rotate(-10deg);
+          box-shadow: 0 10px 35px rgba(0,0,0,0.18);
         }
 
         .back-button:active {

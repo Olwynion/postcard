@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap');
 
 * {
   margin: 0;
@@ -12,8 +12,12 @@ html, body {
   overflow-x: hidden;
 }
 
+:root {
+  --font-caveat: 'Caveat', var(--font-caveat), cursive;
+}
+
 body {
-  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  font-family: var(--font-caveat), 'Caveat', Georgia, 'Times New Roman', cursive;
   background: linear-gradient(135deg, #fef3f2, #fdf2f8, #faf5ff);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -50,7 +54,7 @@ img {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
 }
 
 /* PhotoGallery Styles */
@@ -87,10 +91,127 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .season-name {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 1.6rem;
+  font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+  font-size: 2rem;
   font-weight: 600;
   color: #5a4a42;
+}
+
+.polaroid-caption {
+  font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+  font-size: 1rem;
+  color: #555;
+  font-style: italic;
+}
+
+.polaroid-caption {
+  font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+  font-size: 0.9rem;
+  color: #666;
+  font-style: italic;
+}
+
+.quote-text {
+  font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+  font-size: 1.6rem;
+  color: #3d2914;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.quote-author {
+  font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+  font-size: 1.2rem;
+  color: #6b4423;
+}
+
+.tab-name {
+  font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #5a4a42;
+}
+
+.choice-label {
+  font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+  font-size: 1.4rem;
+  color: #6b5b4f;
+}
+
+.season-name {
+  font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #5a4a42;
+}
+
+.quote-text {
+  font-family: 'Caveat', Georgia, serif;
+  font-size: 2rem;
+  color: #3d2914;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.quote-author {
+  font-family: 'Caveat', Georgia, serif;
+  font-size: 1.4rem;
+  color: #6b4423;
+}
+
+.tab-name {
+  font-family: 'Caveat', Georgia, serif;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #5a4a42;
+}
+
+.choice-label {
+  font-family: 'Caveat', Georgia, serif;
+  font-size: 1.6rem;
+  color: #6b5b4f;
+}
+
+.paper-texture {
+  position: relative;
+}
+
+.paper-texture::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(139, 90, 43, 0.02) 1px,
+      rgba(139, 90, 43, 0.02) 2px
+    );
+  pointer-events: none;
+}
+
+.paper-texture-subtle {
+  position: relative;
+}
+
+.paper-texture-subtle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(ellipse at 20% 30%, rgba(139, 90, 43, 0.03) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(139, 90, 43, 0.02) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.handwritten-border {
+  border: 2px dashed rgba(139, 90, 43, 0.2);
+  border-radius: 8px;
+}
+
+.ink-text {
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .carousel-wrapper {
@@ -205,9 +326,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .polaroid-caption {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 0.7rem;
-  color: #999;
+  font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+  font-size: 0.95rem;
+  color: #555;
   font-style: italic;
 }
 
@@ -242,4 +363,40 @@ h1, h2, h3, h4, h5, h6 {
 
 .dot-emoji {
   font-size: 2rem;
+}
+
+.gallery-bg-deco {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.gallery-deco-tl, .gallery-deco-tr {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  opacity: 0.4;
+}
+
+.gallery-deco-tl { top: 80px; left: 15px; }
+.gallery-deco-tr { top: 80px; right: 15px; }
+
+.gallery-deco-float {
+  position: absolute;
+  opacity: 0.3;
+}
+
+.gf1 { left: 10%; top: 35%; }
+.gf2 { right: 10%; top: 50%; }
+
+.decorations-left, .decorations-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.decoration {
+  opacity: 0.5;
 }

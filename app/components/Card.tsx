@@ -242,21 +242,19 @@ export default function Card({ onOpen }: { onOpen: () => void }) {
         }
 
         .card-title {
-          font-family: 'Playfair Display', Georgia, serif;
-          font-size: clamp(1.8rem, 6vw, 3.5rem);
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: clamp(2.2rem, 7vw, 4rem);
           font-weight: 700;
           color: #fff;
           margin-bottom: 16px;
           text-shadow: 0 4px 30px rgba(0,0,0,0.4);
-          letter-spacing: 0.02em;
         }
 
         .card-subtitle {
-          font-family: 'Playfair Display', Georgia, serif;
-          font-size: clamp(1rem, 3vw, 1.4rem);
-          color: rgba(255, 255, 255, 0.85);
-          font-weight: 400;
-          letter-spacing: 0.15em;
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: clamp(1.4rem, 4vw, 1.8rem);
+          color: rgba(255, 255, 255, 0.9);
+          letter-spacing: 0.08em;
           animation: pulse 2s ease-in-out infinite;
         }
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import ParticlesCanvas from './ParticlesCanvas';
 
 const quotes = [
   {
@@ -33,6 +34,8 @@ const quotes = [
   },
 ];
 
+const emojiSet = ['💕', '✨', '💖', '💘', '❤️', '⭐', '🌹', '💌'];
+
 export default function Quotes() {
   const [current, setCurrent] = useState(0);
   const [printedText, setPrintedText] = useState('');
@@ -58,7 +61,7 @@ export default function Quotes() {
       } else {
         clearInterval(timeoutRef.current!);
         setIsAnimating(false);
-        setTimeout(() => setShowAuthor(true), 200);
+        setTimeout(() => setShowAuthor(true), 600);
       }
     }, 35);
   };
@@ -68,16 +71,15 @@ export default function Quotes() {
     return () => {
       if (timeoutRef.current) clearInterval(timeoutRef.current);
     };
-  }, []);
+  }, [current]);
 
   const goToQuote = (index: number) => {
-    if (index === current || isAnimating) return;
+    if (isAnimating) return;
     setAnimDirection('out');
-
     setTimeout(() => {
       setCurrent(index);
       setAnimDirection('in');
-      setTimeout(printText, 50);
+      setTimeout(() => setAnimDirection(null), 300);
     }, 300);
   };
 
@@ -90,147 +92,118 @@ export default function Quotes() {
   };
 
   return (
-    <div className="quotes-container">
-      <canvas ref={undefined} className="bg-particles" />
-      
-      <div className="scene-layer flowers-bg">
-        <div className="flower-cluster cluster-1">
-          <span style={{fontSize: '3rem', opacity: 0.15}}>🌻</span>
-          <span style={{fontSize: '2rem', opacity: 0.12}}>🌼</span>
-          <span style={{fontSize: '2.5rem', opacity: 0.1}}>🌻</span>
-        </div>
-        <div className="flower-cluster cluster-2">
-          <span style={{fontSize: '2.5rem', opacity: 0.12}}>🌼</span>
-          <span style={{fontSize: '3rem', opacity: 0.15}}>🌻</span>
-          <span style={{fontSize: '2rem', opacity: 0.1}}>🌼</span>
-        </div>
-        <div className="flower-cluster cluster-3">
-          <span style={{fontSize: '2rem', opacity: 0.1}}>🌻</span>
-          <span style={{fontSize: '2.5rem', opacity: 0.12}}>🌼</span>
-        </div>
+    <>
+      <ParticlesCanvas emojiSet={emojiSet} color="#fbbf24" count={15} />
+
+      <div className="deco-fixed deco-left-top">❤️</div>
+      <div className="deco-fixed deco-left-middle">📝</div>
+      <div className="deco-fixed deco-left-bottom">✨</div>
+      <div className="deco-fixed deco-right-top">🌹</div>
+      <div className="deco-fixed deco-right-middle">🦋</div>
+      <div className="deco-fixed deco-right-bottom">💌</div>
+      <div className="deco-fixed deco-bottom-center">
+        <span style={{ fontSize: '1.4rem' }}>💖</span>
+        <span style={{ fontSize: '1.2rem' }}>💘</span>
+        <span style={{ fontSize: '1.3rem' }}>💕</span>
       </div>
 
-      <div className={`quote-card ${animDirection === 'out' ? 'slide-out' : ''} ${animDirection === 'in' ? 'slide-in' : ''}`}>
-        <div className="card-inner">
-          <div className="quote-decoration top-left">❝</div>
-          <div className="quote-decoration bottom-right">❞</div>
+      <div className="quotes-container">
+        <div className={`quote-card ${animDirection === 'out' ? 'slide-out' : ''} ${animDirection === 'in' ? 'slide-in' : ''}`}>
+          <div className="card-inner">
+            <div className="quote-decoration top-left">❝</div>
+            <div className="quote-decoration bottom-right">❞</div>
 
-          <div className="flowers-side flowers-left">
-            <span>🌻</span>
-            <span>🌼</span>
-          </div>
-          
-          <div className="flowers-side flowers-right">
-            <span>🌼</span>
-            <span>🌻</span>
-          </div>
-
-          <div className="quote-content">
-            <div className="quote-ribbon">
-              <span className="ribbon-icon">✨</span>
-              <span className="ribbon-text">Цитата {current + 1} из {quotes.length}</span>
-            </div>
-            
-            <p className="quote-text">
-              {printedText}
-              {!showAuthor && <span className="cursor">|</span>}
-            </p>
-            
-            {showAuthor && (
-              <div className="author-wrapper">
-                <div className="author-line"></div>
-                <p className="quote-author">— {quotes[current].author}</p>
-                <div className="author-line"></div>
+            <div className="quote-content">
+              <div className="quote-ribbon">
+                <span style={{ fontSize: '1rem' }}>💘</span>
+                <span className="ribbon-text">Цитата {current + 1} из {quotes.length}</span>
+                <span style={{ fontSize: '0.9rem' }}>💕</span>
               </div>
-            )}
-          </div>
-
-          <div className="quote-controls">
-            <button onClick={prev} className="quote-btn" aria-label="Предыдущая" disabled={isAnimating}>
-              ←
-            </button>
-            
-            <div className="quote-dots">
-              {quotes.map((_, index) => (
-                <button
-                  key={index}
-                  className={`quote-dot ${current === index ? 'active' : ''}`}
-                  onClick={() => goToQuote(index)}
-                  aria-label={`Цитата ${index + 1}`}
-                />
-              ))}
+              
+              <div className="quote-icons-top">
+                <span style={{ fontSize: '1.8rem' }}>💌</span>
+              </div>
+              
+              <p className="quote-text">
+                {printedText}
+                {!showAuthor && <span className="cursor">|</span>}
+              </p>
+              
+              <div className="quote-icons-bottom">
+                <span style={{ fontSize: '1.6rem' }}>💋</span>
+              </div>
+              
+              {showAuthor && (
+                <div className="author-wrapper">
+                  <div className="author-line"></div>
+                  <p className="quote-author">— {quotes[current].author}</p>
+                  <div className="author-line"></div>
+                </div>
+              )}
             </div>
-            
-            <button onClick={next} className="quote-btn" aria-label="Следующая" disabled={isAnimating}>
-              →
-            </button>
+
+            <div className="quote-controls">
+              <button onClick={prev} className="quote-btn" disabled={isAnimating}>←</button>
+              
+              <div className="quote-dots">
+                {quotes.map((_, index) => (
+                  <button
+                    key={index}
+                    className={`quote-dot ${current === index ? 'active' : ''}`}
+                    onClick={() => goToQuote(index)}
+                  />
+                ))}
+              </div>
+              
+              <button onClick={next} className="quote-btn" disabled={isAnimating}>→</button>
+            </div>
           </div>
         </div>
-      </div>
-
-      <div className="scene-layer decorations-bottom">
-        <span style={{fontSize: '1.5rem', opacity: 0.08}}>🌻</span>
-        <span style={{fontSize: '2rem', opacity: 0.1}}>🌼</span>
-        <span style={{fontSize: '1.2rem', opacity: 0.06}}>🌻</span>
       </div>
 
       <style jsx>{`
+        .deco-fixed {
+          position: fixed;
+          pointer-events: none;
+          z-index: 1;
+          font-size: 1.5rem;
+          opacity: 0.25;
+        }
+
+        .deco-left-top { left: 12px; top: 15%; }
+        .deco-left-middle { left: 12px; top: 45%; }
+        .deco-left-bottom { left: 12px; top: 70%; }
+
+        .deco-right-top { right: 12px; top: 15%; }
+        .deco-right-middle { right: 12px; top: 45%; }
+        .deco-right-bottom { right: 12px; top: 70%; }
+
+        .deco-bottom-center {
+          position: fixed;
+          bottom: 25px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          gap: 20px;
+          pointer-events: none;
+          z-index: 1;
+          opacity: 0.4;
+        }
+
         .quotes-container {
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: 30px;
-          padding: 40px 20px;
           min-height: 100vh;
+          padding: 20px;
           position: relative;
-          overflow: hidden;
-        }
-
-        .bg-particles {
-          position: fixed;
-          inset: 0;
-          pointer-events: none;
-          z-index: 0;
-        }
-
-        .scene-layer {
-          position: fixed;
-          pointer-events: none;
-          z-index: 1;
-        }
-
-        .flowers-bg {
-          inset: 0;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0 5%;
-        }
-
-        .flower-cluster {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-
-        .cluster-1 { transform: rotate(-5deg); }
-        .cluster-2 { transform: rotate(3deg); }
-        .cluster-3 { transform: rotate(-8deg); }
-
-        .decorations-bottom {
-          bottom: 20px;
-          left: 50%;
-          transform: translateX(-50%);
-          display: flex;
-          gap: 30px;
+          z-index: 2;
         }
 
         .quote-card {
           width: 100%;
-          max-width: 580px;
-          position: relative;
-          z-index: 10;
+          max-width: 480px;
           animation: floatIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
@@ -257,181 +230,115 @@ export default function Quotes() {
         }
 
         .card-inner {
-          background: rgba(255, 251, 235, 0.92);
-          backdrop-filter: blur(20px);
-          border-radius: 16px;
-          padding: 50px 40px;
+          background: linear-gradient(145deg, #fffbeb, #fef3c7);
+          border-radius: 8px;
+          padding: 36px 28px;
           position: relative;
-          box-shadow: 
-            0 25px 80px rgba(139, 90, 43, 0.15),
-            0 8px 30px rgba(139, 90, 43, 0.1),
-            inset 0 1px 0 rgba(255,255,255,0.8);
-          border: 1px solid rgba(139, 90, 43, 0.1);
-        }
-
-        .card-inner::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 4px;
-          background: linear-gradient(90deg, #8b5a2b, #d2691e, #8b5a2b);
-          border-radius: 16px 16px 0 0;
+          box-shadow: 0 20px 60px rgba(245, 158, 11, 0.12);
+          border: 2px solid rgba(245, 158, 11, 0.15);
         }
 
         .quote-decoration {
           position: absolute;
-          font-size: 4rem;
-          color: rgba(139, 90, 43, 0.12);
+          font-size: 2rem;
+          color: rgba(139, 90, 43, 0.1);
           font-family: Georgia, serif;
-          line-height: 1;
         }
 
-        .quote-decoration.top-left {
-          top: 20px;
-          left: 25px;
-        }
-
-        .quote-decoration.bottom-right {
-          bottom: 20px;
-          right: 25px;
-        }
-
-        .flowers-side {
-          position: absolute;
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-          top: 50%;
-          transform: translateY(-50%);
-        }
-
-        .flowers-left { left: 12px; }
-        .flowers-right { right: 12px; }
-
-        .flowers-side span {
-          font-size: 1.8rem;
-          opacity: 0.5;
-          animation: sway 3s ease-in-out infinite;
-        }
-
-        .flowers-side span:nth-child(2) {
-          animation-delay: 0.5s;
-        }
-
-        @keyframes sway {
-          0%, 100% { transform: rotate(-5deg); }
-          50% { transform: rotate(5deg); }
-        }
+        .quote-decoration.top-left { top: 10px; left: 14px; }
+        .quote-decoration.bottom-right { bottom: 10px; right: 14px; }
 
         .quote-content {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 28px;
+          gap: 16px;
         }
 
         .quote-ribbon {
           display: flex;
           align-items: center;
-          gap: 10px;
-          padding: 8px 20px;
-          background: linear-gradient(135deg, rgba(139, 90, 43, 0.1), rgba(210, 105, 30, 0.1));
+          gap: 8px;
+          padding: 4px 12px;
+          background: linear-gradient(135deg, rgba(139, 90, 43, 0.08), rgba(210, 105, 30, 0.08));
           border-radius: 20px;
         }
 
-        .ribbon-icon {
-          font-size: 1rem;
-          animation: sparkle 2s ease-in-out infinite;
-        }
-
-        @keyframes sparkle {
-          0%, 100% { opacity: 0.7; transform: scale(1); }
-          50% { opacity: 1; transform: scale(1.2); }
-        }
-
         .ribbon-text {
-          font-family: 'Playfair Display', Georgia, serif;
-          font-size: 0.9rem;
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: 0.85rem;
           color: #8b5a2b;
-          font-weight: 500;
+        }
+
+        .quote-icons-top {
+          display: flex;
+          gap: 12px;
+          opacity: 0.8;
+        }
+
+        .quote-icons-bottom {
+          display: flex;
+          gap: 12px;
+          opacity: 0.85;
         }
 
         .quote-text {
-          font-family: 'Playfair Display', Georgia, serif;
-          font-size: clamp(1.3rem, 4vw, 1.7rem);
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: clamp(1.1rem, 4vw, 1.4rem);
           color: #3d2914;
-          line-height: 1.9;
+          line-height: 1.4;
           font-style: italic;
           text-align: center;
-          min-height: 80px;
-          text-shadow: 0 1px 0 rgba(255,255,255,0.8);
-        }
-
-        .cursor {
-          animation: blink 0.7s ease-in-out infinite;
-          color: #8b5a2b;
-        }
-
-        @keyframes blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
+          min-height: 45px;
         }
 
         .author-wrapper {
           display: flex;
           align-items: center;
-          gap: 16px;
-          animation: fadeInUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
+          gap: 12px;
+          margin-top: 8px;
         }
 
         .author-line {
           width: 40px;
           height: 1px;
-          background: linear-gradient(90deg, transparent, #8b5a2b, transparent);
+          background: linear-gradient(90deg, transparent, #d97706, transparent);
         }
 
         .quote-author {
-          font-family: 'Playfair Display', Georgia, serif;
-          font-size: 1rem;
-          color: #6b4423;
-          font-weight: 500;
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: 0.9rem;
+          color: #92400e;
+          font-style: italic;
         }
 
         .quote-controls {
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 24px;
-          margin-top: 10px;
+          gap: 16px;
+          margin-top: 20px;
         }
 
         .quote-btn {
-          font-size: 1.4rem;
-          background: linear-gradient(135deg, #8b5a2b, #6b4423);
-          border: none;
-          width: 52px;
-          height: 52px;
+          width: 40px;
+          height: 40px;
           border-radius: 50%;
+          background: linear-gradient(135deg, #fff, #fef9f3);
+          border: 2px solid rgba(245, 158, 11, 0.3);
           cursor: pointer;
-          color: #fff;
-          transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-          box-shadow: 0 6px 20px rgba(139, 90, 43, 0.3);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1rem;
+          color: #92400e;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15);
         }
 
         .quote-btn:hover:not(:disabled) {
-          transform: scale(1.15);
-          box-shadow: 0 10px 30px rgba(139, 90, 43, 0.4);
-        }
-
-        .quote-btn:active:not(:disabled) {
-          transform: scale(0.95);
+          transform: scale(1.1);
+          box-shadow: 0 6px 20px rgba(245, 158, 11, 0.25);
         }
 
         .quote-btn:disabled {
@@ -441,31 +348,40 @@ export default function Quotes() {
 
         .quote-dots {
           display: flex;
-          gap: 12px;
+          gap: 8px;
         }
 
         .quote-dot {
-          width: 14px;
-          height: 14px;
+          width: 10px;
+          height: 10px;
           border-radius: 50%;
-          background: #d2691e;
-          border: none;
+          border: 2px solid rgba(245, 158, 11, 0.4);
+          background: transparent;
           cursor: pointer;
-          transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-          opacity: 0.4;
-        }
-
-        .quote-dot:hover {
-          opacity: 0.7;
-          transform: scale(1.3);
+          transition: all 0.3s ease;
+          padding: 0;
         }
 
         .quote-dot.active {
-          opacity: 1;
-          transform: scale(1.4);
-          box-shadow: 0 0 15px rgba(139, 90, 43, 0.6);
+          background: #f59e0b;
+          border-color: #f59e0b;
+          transform: scale(1.2);
+        }
+
+        .quote-dot:hover:not(.active) {
+          border-color: #f59e0b;
+        }
+
+        .cursor {
+          animation: blink 0.8s ease-in-out infinite;
+          color: #f59e0b;
+        }
+
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
         }
       `}</style>
-    </div>
+    </>
   );
 }

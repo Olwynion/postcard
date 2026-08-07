@@ -169,8 +169,8 @@ export default function PolaroidSelector({ onSelectTab }: PolaroidSelectorProps)
         }
 
         .selector-title {
-          font-family: 'Playfair Display', Georgia, serif;
-          font-size: clamp(1.5rem, 5vw, 2.5rem);
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: clamp(1.5rem, 5vw, 2.2rem);
           font-weight: 700;
           color: #6b5b4f;
           text-align: center;
@@ -264,9 +264,9 @@ export default function PolaroidSelector({ onSelectTab }: PolaroidSelectorProps)
         }
 
         .polaroid-label {
-          font-family: 'Playfair Display', Georgia, serif;
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
           font-style: italic;
-          font-size: clamp(1rem, 3vw, 1.25rem);
+          font-size: clamp(1rem, 3vw, 1.2rem);
           color: #6b5b4f;
           letter-spacing: 0.05em;
           background: rgba(255,255,255,0.95);
@@ -282,8 +282,8 @@ export default function PolaroidSelector({ onSelectTab }: PolaroidSelectorProps)
         }
 
         .hint {
-          font-family: 'Playfair Display', Georgia, serif;
-          font-size: 1rem;
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: 1.1rem;
           color: #9c8b7e;
           font-style: italic;
           animation: fadeIn 0.8s ease-out 1s forwards;
