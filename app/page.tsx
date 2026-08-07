@@ -10,9 +10,11 @@ import Love from './components/Love';
 
 type Screen = 'card' | 'selector' | { tab: 'moments' | 'quotes' | 'love' };
 
+const defaultSeasonBg = 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fbcfe8 100%)';
+
 export default function Home() {
   const [screen, setScreen] = useState<Screen>('card');
-  const [seasonBackground, setSeasonBackground] = useState<string>('');
+  const [seasonBackground, setSeasonBackground] = useState<string>(defaultSeasonBg);
 
   const handleCardOpen = () => {
     setScreen('selector');

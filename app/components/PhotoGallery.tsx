@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface PhotoItem {
   url: string;
@@ -95,13 +96,11 @@ interface Particle {
 
 export default function PhotoGallery({ onSeasonChange }: { onSeasonChange?: (bg: string) => void }) {
   const [currentSeason, setCurrentSeason] = useState(0);
-  const [isSliding, setIsSliding] = useState(false);
-  const [slideDirection, setSlideDirection] = useState<'left' | 'right' | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const touchStartX = useRef(0);
   const particlesRef = useRef<Particle[]>([]);
   const animationRef = useRef<number | undefined>(undefined);
+  const touchStartX = useRef(0);
   const touchStartY = useRef(0);
 
   const season = seasons[currentSeason];
@@ -158,12 +157,6 @@ export default function PhotoGallery({ onSeasonChange }: { onSeasonChange?: (bg:
     ctx.bezierCurveTo(size * 0.8, -size * 0.5, size * 0.8, size * 0.5, 0, size);
     ctx.bezierCurveTo(-size * 0.8, size * 0.5, -size * 0.8, -size * 0.5, 0, -size);
     ctx.fill();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.moveTo(0, -size * 0.8);
-    ctx.lineTo(0, size * 0.8);
-    ctx.stroke();
     ctx.restore();
   };
 
@@ -172,19 +165,19 @@ export default function PhotoGallery({ onSeasonChange }: { onSeasonChange?: (bg:
     if (!canvas) return;
 
     const particles: Particle[] = [];
-    const count = 50;
+    const count = 40;
 
     for (let i = 0; i < count; i++) {
       const type = Math.random() > 0.5 ? 'snowflake' : 'leaf';
       particles.push({
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        size: Math.random() * 8 + 4,
-        speedY: Math.random() * 1.5 + 0.5,
-        speedX: (Math.random() - 0.5) * 1,
+        size: Math.random() * 6 + 3,
+        speedY: Math.random() * 1 + 0.3,
+        speedX: (Math.random() - 0.5) * 0.5,
         rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 3,
-        opacity: Math.random() * 0.5 + 0.3,
+        rotationSpeed: (Math.random() - 0.5) * 2,
+        opacity: Math.random() * 0.4 + 0.2,
         type,
       });
     }
@@ -245,32 +238,23 @@ export default function PhotoGallery({ onSeasonChange }: { onSeasonChange?: (bg:
     };
   }, [season.id, season.particleColor, initParticles]);
 
-  const changeSeason = (newIndex: number, direction: 'left' | 'right') => {
-    if (isSliding) return;
-    setIsSliding(true);
-    setSlideDirection(direction);
+  const changeSeason = (newIndex: number) => {
+    if (isTransitioning || newIndex === currentSeason) return;
+    setIsTransitioning(true);
+    initParticles();
 
     setTimeout(() => {
       setCurrentSeason(newIndex);
-      setIsSliding(false);
-      setSlideDirection(null);
+      setIsTransitioning(false);
     }, 400);
   };
 
   const nextSeason = () => {
-    const newIndex = (currentSeason + 1) % seasons.length;
-    changeSeason(newIndex, 'left');
+    changeSeason((currentSeason + 1) % seasons.length);
   };
 
   const prevSeason = () => {
-    const newIndex = (currentSeason - 1 + seasons.length) % seasons.length;
-    changeSeason(newIndex, 'right');
-  };
-
-  const goToSeason = (index: number) => {
-    if (index === currentSeason || isSliding) return;
-    const direction = index > currentSeason ? 'left' : 'right';
-    changeSeason(index, direction);
+    changeSeason((currentSeason - 1 + seasons.length) % seasons.length);
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -284,420 +268,120 @@ export default function PhotoGallery({ onSeasonChange }: { onSeasonChange?: (bg:
     const diffX = touchStartX.current - touchEndX;
     const diffY = Math.abs(touchStartY.current - touchEndY);
 
-    if (diffY > 50 && diffY > Math.abs(diffX)) {
-      return;
-    }
-
+    if (diffY > 50 && diffY > Math.abs(diffX)) return;
     if (Math.abs(diffX) > 50) {
-      if (diffX > 0) {
-        nextSeason();
-      } else {
-        prevSeason();
-      }
+      diffX > 0 ? nextSeason() : prevSeason();
     }
   };
 
   return (
-    <div className="gallery" ref={containerRef}>
+    <div className="gallery">
       <canvas ref={canvasRef} className="particle-canvas" />
 
-      <div className="scene-layer decorations-bg">
-        <div className="deco-cluster left-top">
-          {season.decorations.map((emoji, i) => (
-            <span key={i} style={{ fontSize: `${2 + i * 0.5}rem`, opacity: 0.08 + i * 0.02 }}>
-              {emoji}
-            </span>
-          ))}
-        </div>
-        <div className="deco-cluster right-bottom">
-          {season.decorations.map((emoji, i) => (
-            <span key={i + 10} style={{ fontSize: `${2.5 - i * 0.4}rem`, opacity: 0.08 + i * 0.02 }}>
-              {emoji}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      <div className="season-indicator" style={{ background: season.accentColor + '30' }}>
+      <motion.div
+        className="season-indicator"
+        style={{ background: season.accentColor + '30' }}
+        initial={{ scale: 0.8, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.5, ease: 'easeOut' }}
+        key={season.id}
+      >
         <span className="season-emoji">{season.emoji}</span>
         <span className="season-name">{season.name}</span>
-      </div>
+      </motion.div>
 
-      <div
+      <motion.div
         className="carousel-wrapper"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
+        animate={{ opacity: isTransitioning ? 0.3 : 1 }}
+        transition={{ duration: 0.3 }}
       >
-        <button onClick={prevSeason} className="carousel-btn prev" aria-label="Предыдущий">
+        <motion.button
+          onClick={prevSeason}
+          className="carousel-btn"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          disabled={isTransitioning}
+        >
           ←
-        </button>
+        </motion.button>
 
-        <div className={`photos-container ${isSliding ? `slide-${slideDirection}` : ''}`}>
+        <div className="photos-container">
           <div className="decorations-left">
             {season.decorations.map((emoji, i) => (
-              <span
-                key={i}
-                className="decoration decoration-left"
-                style={{
-                  animationDelay: `${i * 0.2}s`,
-                  fontSize: `${1.5 + i * 0.4}rem`
-                }}
-              >
+              <span key={i} className="decoration" style={{ fontSize: `${1.5 + i * 0.4}rem` }}>
                 {emoji}
               </span>
             ))}
           </div>
 
           <div className="photos-area">
-            <div className="photos-grid">
-              {season.photos.map((photo, index) => (
-                <div
-                  key={index}
-                  className="photo-item"
-                  style={{ animationDelay: `${index * 0.12}s` }}
-                >
-                  <div className="polaroid-frame" style={{ '--accent': season.accentColor } as React.CSSProperties}>
-                    <div className="polaroid-photo">
-                      <img src={photo.url} alt={photo.caption} />
+            <AnimatePresence mode="wait">
+              <motion.div
+                className="photos-grid"
+                key={season.id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                {season.photos.map((photo, index) => (
+                  <motion.div
+                    key={photo.url + season.id}
+                    className="photo-item"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.08, ease: 'easeOut' }}
+                  >
+                    <div className="polaroid-frame">
+                      <div className="polaroid-photo">
+                        <img src={photo.url} alt={photo.caption} />
+                      </div>
+                      <div className="polaroid-bottom">
+                        <span className="polaroid-caption">{photo.caption}</span>
+                      </div>
                     </div>
-                    <div className="polaroid-bottom">
-                      <span className="polaroid-caption">{photo.caption}</span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </AnimatePresence>
           </div>
 
           <div className="decorations-right">
             {season.decorations.map((emoji, i) => (
-              <span
-                key={i + 10}
-                className="decoration decoration-right"
-                style={{
-                  animationDelay: `${i * 0.25}s`,
-                  fontSize: `${1.6 - i * 0.3}rem`
-                }}
-              >
+              <span key={i + 10} className="decoration" style={{ fontSize: `${1.6 - i * 0.3}rem` }}>
                 {emoji}
               </span>
             ))}
           </div>
         </div>
 
-        <button onClick={nextSeason} className="carousel-btn next" aria-label="Следующий">
+        <motion.button
+          onClick={nextSeason}
+          className="carousel-btn"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          disabled={isTransitioning}
+        >
           →
-        </button>
-      </div>
-
-      <div className="scene-layer decorations-bottom">
-        <span style={{ fontSize: '1.2rem', opacity: 0.06 }}>{season.decorations[0]}</span>
-        <span style={{ fontSize: '1.5rem', opacity: 0.08 }}>{season.decorations[1]}</span>
-        <span style={{ fontSize: '1rem', opacity: 0.05 }}>{season.decorations[2]}</span>
-      </div>
+        </motion.button>
+      </motion.div>
 
       <div className="season-dots">
         {seasons.map((s, index) => (
-          <button
+          <motion.button
             key={s.id}
             className={`season-dot ${currentSeason === index ? 'active' : ''}`}
-            onClick={() => goToSeason(index)}
-            style={{
-              '--accent': s.accentColor,
-            } as React.CSSProperties}
-            aria-label={s.name}
+            onClick={() => changeSeason(index)}
+            style={{ '--accent': s.accentColor } as React.CSSProperties}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
           >
             <span className="dot-emoji">{s.emoji}</span>
-          </button>
+          </motion.button>
         ))}
       </div>
-
-      <style jsx>{`
-        .gallery {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 24px;
-          padding: 20px;
-          min-height: 100vh;
-          position: relative;
-          animation: fadeIn 0.5s ease-out;
-        }
-
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-
-        .particle-canvas {
-          position: fixed;
-          inset: 0;
-          pointer-events: none;
-          z-index: 0;
-        }
-
-        .scene-layer {
-          position: fixed;
-          pointer-events: none;
-          z-index: 1;
-        }
-
-        .decorations-bg {
-          inset: 0;
-        }
-
-        .deco-cluster {
-          position: absolute;
-          display: flex;
-          flex-direction: column;
-          gap: 15px;
-        }
-
-        .deco-cluster.left-top {
-          left: 3%;
-          top: 15%;
-          transform: rotate(-8deg);
-        }
-
-        .deco-cluster.right-bottom {
-          right: 3%;
-          bottom: 20%;
-          transform: rotate(5deg);
-        }
-
-        .decorations-bottom {
-          bottom: 30px;
-          left: 50%;
-          transform: translateX(-50%);
-          display: flex;
-          gap: 25px;
-        }
-
-        .season-indicator {
-          display: flex;
-          align-items: center;
-          gap: 14px;
-          padding: 16px 32px;
-          border-radius: 50px;
-          backdrop-filter: blur(10px);
-          box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-          z-index: 10;
-          animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        @keyframes bounceIn {
-          0% { transform: scale(0.5); opacity: 0; }
-          100% { transform: scale(1); opacity: 1; }
-        }
-
-        .season-emoji {
-          font-size: 2.2rem;
-          animation: wiggle 2s ease-in-out infinite;
-        }
-
-        @keyframes wiggle {
-          0%, 100% { transform: rotate(-5deg); }
-          50% { transform: rotate(5deg); }
-        }
-
-        .season-name {
-          font-family: 'Playfair Display', Georgia, serif;
-          font-size: 1.6rem;
-          font-weight: 600;
-          color: #5a4a42;
-          letter-spacing: 0.02em;
-        }
-
-        .carousel-wrapper {
-          display: flex;
-          align-items: center;
-          gap: 20px;
-          width: 100%;
-          max-width: 950px;
-          z-index: 10;
-        }
-
-        .carousel-btn {
-          font-size: 2rem;
-          background: rgba(255,255,255,0.9);
-          border: none;
-          width: 56px;
-          height: 56px;
-          border-radius: 50%;
-          cursor: pointer;
-          color: #6b5b4f;
-          transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-          flex-shrink: 0;
-          box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-        }
-
-        .carousel-btn:hover {
-          transform: scale(1.15);
-          box-shadow: 0 12px 40px rgba(0,0,0,0.2);
-          background: #fff;
-        }
-
-        .carousel-btn:active {
-          transform: scale(0.95);
-        }
-
-        .photos-container {
-          flex: 1;
-          display: flex;
-          align-items: center;
-          gap: 16px;
-        }
-
-        .decorations-left, .decorations-right {
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-        }
-
-        .decoration {
-          opacity: 0.6;
-          animation: growIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
-        }
-
-        .decorations-left .decoration:nth-child(1) { animation-delay: 0.1s; }
-        .decorations-left .decoration:nth-child(2) { animation-delay: 0.3s; }
-        .decorations-left .decoration:nth-child(3) { animation-delay: 0.5s; }
-
-        .decorations-right .decoration:nth-child(1) { animation-delay: 0.15s; }
-        .decorations-right .decoration:nth-child(2) { animation-delay: 0.35s; }
-        .decorations-right .decoration:nth-child(3) { animation-delay: 0.55s; }
-
-        @keyframes growIn {
-          0% { opacity: 0; transform: scale(0) rotate(-180deg); }
-          100% { opacity: 0.6; transform: scale(1) rotate(0deg); }
-        }
-
-        .photos-area {
-          flex: 1;
-          padding: 20px;
-          background: rgba(255,255,255,0.4);
-          backdrop-filter: blur(10px);
-          border-radius: 16px;
-          box-shadow: 
-            0 20px 60px rgba(0,0,0,0.08),
-            inset 0 1px 0 rgba(255,255,255,0.6);
-          border: 1px solid rgba(255,255,255,0.5);
-        }
-
-        .photos-grid {
-          display: grid;
-          grid-template-columns: repeat(2, 1fr);
-          gap: 20px;
-        }
-
-        .photo-item {
-          display: flex;
-          justify-content: center;
-          animation: photoIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-          opacity: 0;
-        }
-
-        @keyframes photoIn {
-          from { opacity: 0; transform: scale(0.7) translateY(20px); }
-          to { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .polaroid-frame {
-          width: 100%;
-          max-width: 160px;
-          background: #fff;
-          padding: 10px 10px 32px 10px;
-          box-shadow: 0 8px 30px rgba(0,0,0,0.12);
-          transform: rotate(-3deg);
-          transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-          position: relative;
-        }
-
-        .photo-item:nth-child(even) .polaroid-frame {
-          transform: rotate(2deg);
-        }
-
-        .photo-item:nth-child(3n) .polaroid-frame {
-          transform: rotate(-1deg);
-        }
-
-        .photo-item:nth-child(4n) .polaroid-frame {
-          transform: rotate(3deg);
-        }
-
-        .polaroid-frame:hover {
-          transform: rotate(0deg) scale(1.08);
-          box-shadow: 0 20px 50px rgba(0,0,0,0.18);
-        }
-
-        .polaroid-photo {
-          width: 100%;
-          aspect-ratio: 1;
-          overflow: hidden;
-          background: #f0f0f0;
-        }
-
-        .polaroid-photo img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .polaroid-bottom {
-          position: absolute;
-          bottom: 6px;
-          left: 0;
-          right: 0;
-          text-align: center;
-        }
-
-        .polaroid-caption {
-          font-family: 'Playfair Display', Georgia, serif;
-          font-size: 0.7rem;
-          color: #999;
-          font-style: italic;
-        }
-
-        .season-dots {
-          display: flex;
-          justify-content: center;
-          gap: 16px;
-          z-index: 10;
-          padding-bottom: 40px;
-        }
-
-        .season-dot {
-          width: 60px;
-          height: 60px;
-          border-radius: 50%;
-          background: rgba(255,255,255,0.9);
-          border: 3px solid rgba(255,255,255,0.6);
-          cursor: pointer;
-          transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-          opacity: 0.6;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .season-dot:hover {
-          opacity: 0.9;
-          transform: scale(1.15);
-          border-color: rgba(255,255,255,0.9);
-        }
-
-        .season-dot.active {
-          opacity: 1;
-          transform: scale(1.25);
-          border-color: var(--accent);
-          box-shadow: 0 0 25px var(--accent), 0 4px 15px rgba(0,0,0,0.15);
-        }
-
-        .dot-emoji {
-          font-size: 2rem;
-        }
-      `}</style>
     </div>
   );
 }
