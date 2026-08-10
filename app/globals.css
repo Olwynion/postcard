@@ -475,6 +475,26 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 0.7;
 }
 
+.gallery-continue-btn {
+  background: linear-gradient(135deg, #fce7f3, #fbcfe8);
+  border: none;
+  padding: 16px 36px;
+  border-radius: 30px;
+  font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+  font-size: 1.4rem;
+  color: #be185d;
+  cursor: pointer;
+  box-shadow: 0 8px 30px rgba(236, 72, 153, 0.25);
+  transition: all 0.3s ease;
+  margin-top: 24px;
+  z-index: 10;
+}
+
+.gallery-continue-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(236, 72, 153, 0.35);
+}
+
 /* Responsive Styles */
 @media (max-width: 768px) {
   .season-indicator {
@@ -597,5 +617,11 @@ h1, h2, h3, h4, h5, h6 {
 
   .photo-viewer-caption span {
     font-size: 1rem;
+  }
+
+  .gallery-continue-btn {
+    padding: 14px 28px;
+    font-size: 1.2rem;
+    margin-top: 20px;
   }
 }

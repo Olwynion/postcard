@@ -20,20 +20,6 @@ interface Season {
 
 const seasons: Season[] = [
   {
-    id: 'spring',
-    name: 'Весна',
-    emoji: '🌸',
-    accentColor: '#f9a8d4',
-    background: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fbcfe8 100%)',
-    particleColor: '#f9a8d4',
-    photos: [
-      { url: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400&h=400&fit=crop', caption: 'Первые цветы...' },
-      { url: 'https://images.unsplash.com/photo-1518882605630-8a6c87889c28?w=400&h=400&fit=crop', caption: 'Тёплый ветер...' },
-      { url: 'https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=400&h=400&fit=crop', caption: 'Прогулки вдвоём...' },
-      { url: 'https://images.unsplash.com/photo-1462275646964-a0e3571f4f74?w=400&h=400&fit=crop', caption: 'Сакура...' },
-    ],
-  },
-  {
     id: 'summer',
     name: 'Лето',
     emoji: '☀️',
@@ -75,6 +61,20 @@ const seasons: Season[] = [
       { url: 'https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?w=400&h=400&fit=crop', caption: 'Новогодняя сказка...' },
     ],
   },
+  {
+    id: 'spring',
+    name: 'Весна',
+    emoji: '🌸',
+    accentColor: '#f9a8d4',
+    background: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fbcfe8 100%)',
+    particleColor: '#f9a8d4',
+    photos: [
+      { url: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400&h=400&fit=crop', caption: 'Первые цветы...' },
+      { url: 'https://images.unsplash.com/photo-1518882605630-8a6c87889c28?w=400&h=400&fit=crop', caption: 'Тёплый ветер...' },
+      { url: 'https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=400&h=400&fit=crop', caption: 'Прогулки вдвоём...' },
+      { url: 'https://images.unsplash.com/photo-1462275646964-a0e3571f4f74?w=400&h=400&fit=crop', caption: 'Сакура...' },
+    ],
+  },
 ];
 
 interface Particle {
@@ -89,7 +89,7 @@ interface Particle {
   type: 'snowflake' | 'leaf';
 }
 
-export default function PhotoGallery({ onSeasonChange }: { onSeasonChange?: (bg: string) => void }) {
+export default function PhotoGallery({ onSeasonChange, onNext }: { onSeasonChange?: (bg: string) => void; onNext?: () => void }) {
   const [currentSeason, setCurrentSeason] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<PhotoItem | null>(null);
@@ -352,6 +352,18 @@ export default function PhotoGallery({ onSeasonChange }: { onSeasonChange?: (bg:
           </motion.button>
         ))}
       </div>
+
+      {onNext && currentSeason === seasons.length - 1 && (
+        <motion.button
+          className="gallery-continue-btn"
+          onClick={onNext}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          Продолжить 💕
+        </motion.button>
+      )}
 
       <AnimatePresence>
         {selectedPhoto && (

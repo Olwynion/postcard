@@ -2,34 +2,25 @@
 
 import { useState } from 'react';
 import Card from './components/Card';
-import PolaroidSelector from './components/PolaroidSelector';
-import TabContent from './components/TabContent';
+import YearMessage from './components/YearMessage';
 import PhotoGallery from './components/PhotoGallery';
-import Quotes from './components/Quotes';
-import Love from './components/Love';
+import LoveMessage from './components/LoveMessage';
 
-type Screen = 'card' | 'selector' | { tab: 'moments' | 'quotes' | 'love' };
-
-const defaultSeasonBg = 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fbcfe8 100%)';
+type Screen = 'card' | 'message' | 'moments' | 'love';
 
 export default function Home() {
   const [screen, setScreen] = useState<Screen>('card');
-  const [seasonBackground, setSeasonBackground] = useState<string>(defaultSeasonBg);
 
   const handleCardOpen = () => {
-    setScreen('selector');
+    setScreen('message');
   };
 
-  const handleTabSelect = (tab: 'moments' | 'quotes' | 'love') => {
-    setScreen({ tab });
+  const handleMessageNext = () => {
+    setScreen('moments');
   };
 
-  const handleBack = () => {
-    setScreen('selector');
-  };
-
-  const handleSeasonChange = (bg: string) => {
-    setSeasonBackground(bg);
+  const handleMomentsNext = () => {
+    setScreen('love');
   };
 
   return (
@@ -38,16 +29,16 @@ export default function Home() {
         <Card onOpen={handleCardOpen} />
       )}
 
-      {screen === 'selector' && (
-        <PolaroidSelector onSelectTab={handleTabSelect} />
+      {screen === 'message' && (
+        <YearMessage onNext={handleMessageNext} />
       )}
 
-      {typeof screen === 'object' && 'tab' in screen && (
-        <TabContent tab={screen.tab} onBack={handleBack} seasonBg={screen.tab === 'moments' ? seasonBackground : undefined}>
-          {screen.tab === 'moments' && <PhotoGallery onSeasonChange={handleSeasonChange} />}
-          {screen.tab === 'quotes' && <Quotes />}
-          {screen.tab === 'love' && <Love />}
-        </TabContent>
+      {screen === 'moments' && (
+        <PhotoGallery onNext={handleMomentsNext} />
+      )}
+
+      {screen === 'love' && (
+        <LoveMessage />
       )}
     </div>
   );
