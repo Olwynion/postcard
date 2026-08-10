@@ -38,16 +38,33 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
   const timelineEmojis = ['💕', '💗', '✨', '🌸', '💖', '🌷', '💫', '💝', '🌺', '⭐', '💞', '🌹', '✨', '💕', '💗', '🌸', '💖', '🌷', '💫', '💝'];
   const [particlesList, setParticlesList] = useState<{ id: number; emoji: string; left: number; delay: number; duration: number }[]>([]);
 
+  const [showContinue, setShowContinue] = useState(false);
+
   useEffect(() => {
     setMounted(true);
-    const newParticles = Array.from({ length: 15 }, (_, i) => ({
+    const newParticles = Array.from({ length: 8 }, (_, i) => ({
       id: i,
       emoji: particles[Math.floor(Math.random() * particles.length)],
       left: Math.random() * 100,
-      delay: Math.random() * 5,
-      duration: 8 + Math.random() * 4,
+      delay: Math.random() * 10,
+      duration: 15 + Math.random() * 10,
     }));
     setParticlesList(newParticles);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollHeight = document.documentElement.scrollHeight;
+      const clientHeight = document.documentElement.clientHeight;
+      const scrollTop = window.scrollY;
+      
+      if (scrollHeight - scrollTop <= clientHeight + 100) {
+        setShowContinue(true);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleEventClick = (event: TimelineEvent) => {
@@ -97,7 +114,7 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
       </div>
       <div className="timeline-header">
         <span className="emoji">📅</span>
-        <h1>Наша история</h1>
+        <h1>Наша история любви 💕</h1>
       </div>
 
       <div className="timeline">
@@ -129,10 +146,16 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
         ))}
       </div>
 
-      {onNext && (
-        <button className="continue-btn" onClick={onNext}>
+      {onNext && showContinue && (
+        <motion.button 
+          className="continue-btn" 
+          onClick={onNext}
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
           Продолжить 💕
-        </button>
+        </motion.button>
       )}
 
       <AnimatePresence>
@@ -228,7 +251,7 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           padding-top: 20px;
         }
 
-.timeline-header .emoji {
+        .timeline-header .emoji {
           font-size: 1.8rem;
         }
 
@@ -281,8 +304,8 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
         .timeline-line {
           position: absolute;
           left: 50%;
-          top: 22px;
-          bottom: 22px;
+          top: 34px;
+          bottom: 34px;
           width: 3px;
           background: linear-gradient(180deg, #f9a8d4, #fbcfe8);
           transform: translateX(-50%);
@@ -294,8 +317,36 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
         .timeline-hearts {
           position: absolute;
           left: 50%;
-          top: 22px;
-          bottom: 22px;
+          top: 34px;
+          bottom: 34px;
+          width: 60px;
+          transform: translateX(-50%);
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          align-items: center;
+          pointer-events: none;
+          z-index: 2;
+        }
+
+        .timeline-line {
+          position: absolute;
+          left: 50%;
+          top: 10px;
+          bottom: 100px;
+          width: 3px;
+          background: linear-gradient(180deg, #f9a8d4, #fbcfe8);
+          transform: translateX(-50%);
+          border-radius: 2px;
+          box-shadow: 0 0 10px rgba(249, 168, 212, 0.4);
+          z-index: 1;
+        }
+
+        .timeline-hearts {
+          position: absolute;
+          left: 50%;
+          top: 10px;
+          bottom: 180px;
           width: 60px;
           transform: translateX(-50%);
           display: flex;
@@ -470,24 +521,18 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           gap: 2px;
           padding-top: 8px;
         }
-        }
-
-.timeline-item:hover .timeline-dot {
-          border-color: #f9a8d4;
-          box-shadow: 0 0 20px rgba(249, 168, 212, 0.4);
-        }
-
-        .timeline-content {
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
-        }
 
         .timeline-date {
           font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
           font-size: 0.8rem;
           color: #be185d;
           white-space: nowrap;
+        }
+
+        .timeline-title {
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: 1.05rem;
+          color: #444;
         }
 
         .continue-btn {
@@ -504,6 +549,7 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           color: #be185d;
           cursor: pointer;
           box-shadow: 0 6px 25px rgba(236, 72, 153, 0.2);
+          z-index: 100;
         }
 
         .event-modal {
@@ -530,6 +576,59 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           position: relative;
           border: 1px solid rgba(255,255,255,0.35);
           box-shadow: 0 8px 32px rgba(100,150,200,0.12), inset 0 0 64px rgba(255,255,255,0.15);
+        }
+
+        .timeline {
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+          width: 100%;
+          max-width: 400px;
+          position: relative;
+        }
+
+        .timeline-line {
+          position: absolute;
+          left: 50%;
+          top: 34px;
+          bottom: 34px;
+          width: 3px;
+          background: linear-gradient(180deg, #f9a8d4, #fbcfe8);
+          transform: translateX(-50%);
+          border-radius: 2px;
+          box-shadow: 0 0 10px rgba(249, 168, 212, 0.4);
+          z-index: 1;
+        }
+
+        .timeline-hearts {
+          position: absolute;
+          left: 50%;
+          top: 34px;
+          bottom: 34px;
+          width: 60px;
+          transform: translateX(-50%);
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          align-items: center;
+          pointer-events: none;
+          z-index: 2;
+        }
+
+        .timeline-header h1 {
+          font-family: 'Caveat', cursive;
+          font-size: 2.8rem;
+          font-weight: 700;
+          color: #be185d;
+          margin: 0;
+          text-shadow: 
+            2px 2px 4px rgba(249, 168, 212, 0.3),
+            0 0 20px rgba(249, 168, 212, 0.2);
+          letter-spacing: 1px;
+          background: linear-gradient(135deg, #ec4899, #be185d, #ec4899);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
 
         @media (max-width: 480px) {
