@@ -92,6 +92,7 @@ interface Particle {
 export default function PhotoGallery({ onSeasonChange }: { onSeasonChange?: (bg: string) => void }) {
   const [currentSeason, setCurrentSeason] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [selectedPhoto, setSelectedPhoto] = useState<PhotoItem | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const particlesRef = useRef<Particle[]>([]);
   const animationRef = useRef<number | undefined>(undefined);
@@ -307,6 +308,9 @@ export default function PhotoGallery({ onSeasonChange }: { onSeasonChange?: (bg:
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: index * 0.08, ease: 'easeOut' }}
+                    onClick={() => setSelectedPhoto(photo)}
+                    whileHover={{ scale: 1.02 }}
+                    style={{ cursor: 'pointer' }}
                   >
                     <div className="polaroid-frame">
                       <div className="polaroid-photo">
@@ -348,6 +352,42 @@ export default function PhotoGallery({ onSeasonChange }: { onSeasonChange?: (bg:
           </motion.button>
         ))}
       </div>
+
+      <AnimatePresence>
+        {selectedPhoto && (
+          <motion.div
+            className="photo-viewer"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedPhoto(null)}
+          >
+            <motion.div
+              className="photo-viewer-content"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                className="photo-viewer-close"
+                onClick={() => setSelectedPhoto(null)}
+              >
+                ✕
+              </button>
+              <img
+                src={selectedPhoto.url.replace('w=400&h=400', 'w=1200&h=1200')}
+                alt={selectedPhoto.caption}
+              />
+              <div className="photo-viewer-caption">
+                <span>{selectedPhoto.caption}</span>
+                <span>{season.emoji} {season.name}</span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

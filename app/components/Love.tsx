@@ -447,6 +447,49 @@ export default function Love() {
           0%, 100% { transform: translateY(0) rotate(-5deg); }
           50% { transform: translateY(-8px) rotate(5deg); }
         }
+
+        @media (max-width: 480px) {
+          .love-container {
+            padding: 12px;
+          }
+
+          .love-card {
+            max-width: 100%;
+            padding: 24px 16px;
+          }
+
+          .choice-title {
+            font-size: 1.2rem;
+          }
+
+          .choice-btn {
+            padding: 14px 16px;
+          }
+
+          .choice-icon {
+            font-size: 1.6rem;
+          }
+
+          .choice-label {
+            font-size: 1.1rem;
+          }
+
+          .section-header h2 {
+            font-size: 1.2rem;
+          }
+
+          .section-icon {
+            font-size: 1.8rem;
+          }
+
+          .heart-icon {
+            font-size: 2.4rem;
+          }
+
+          .love-main p {
+            font-size: 1.1rem;
+          }
+        }
       `}</style>
     </>
   );

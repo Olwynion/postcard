@@ -279,6 +279,29 @@ export default function Card({ onOpen }: { onOpen: () => void }) {
           0%, 100% { opacity: 0.4; transform: scale(0.8); }
           50% { opacity: 1; transform: scale(1.2); }
         }
+
+        @media (max-width: 480px) {
+          .hearts-row {
+            gap: 12px;
+          }
+
+          .floating-heart {
+            font-size: clamp(24px, 6vw, 40px);
+          }
+
+          .main-heart {
+            font-size: clamp(70px, 28vw, 120px);
+          }
+
+          .sparkles {
+            gap: 12px;
+            font-size: 1.2rem;
+          }
+
+          .card-title {
+            margin-bottom: 12px;
+          }
+        }
       `}</style>
     </div>
   );

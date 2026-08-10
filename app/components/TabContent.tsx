@@ -264,6 +264,37 @@ return (
         .back-button:active {
           transform: scale(0.95);
         }
+
+        @media (max-width: 480px) {
+          .tab-header {
+            padding: 12px 16px;
+          }
+
+          .tab-icon {
+            font-size: 1.4rem;
+          }
+
+          .tab-name {
+            font-size: 1.2rem;
+          }
+
+          .tab-content {
+            padding: 16px 12px;
+            padding-bottom: 90px;
+          }
+
+          .back-button {
+            bottom: 20px;
+            right: 20px;
+            width: 46px;
+            height: 46px;
+          }
+
+          .back-button svg {
+            width: 20px;
+            height: 20px;
+          }
+        }
       `}</style>
     </div>
   );

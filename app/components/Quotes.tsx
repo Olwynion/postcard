@@ -369,6 +369,35 @@ export default function Quotes() {
           0%, 100% { opacity: 1; }
           50% { opacity: 0; }
         }
+
+        @media (max-width: 480px) {
+          .quotes-container {
+            padding: 12px;
+          }
+
+          .quote-card {
+            max-width: 100%;
+          }
+
+          .card-inner {
+            padding: 24px 18px;
+          }
+
+          .quote-text {
+            font-size: 1.1rem;
+            line-height: 1.35;
+          }
+
+          .quote-btn {
+            width: 36px;
+            height: 36px;
+          }
+
+          .quote-dot {
+            width: 8px;
+            height: 8px;
+          }
+        }
       `}</style>
     </>
   );

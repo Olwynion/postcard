@@ -293,6 +293,50 @@ export default function PolaroidSelector({ onSelectTab }: PolaroidSelectorProps)
         @keyframes fadeIn {
           to { opacity: 1; }
         }
+
+        @media (max-width: 480px) {
+          .selector-content {
+            gap: 40px;
+            padding: 30px 16px;
+          }
+
+          .title-container {
+            gap: 12px;
+          }
+
+          .title-heart {
+            font-size: 1.6rem;
+          }
+
+          .polaroids-row {
+            gap: 20px;
+          }
+
+          .polaroid-frame {
+            width: 90px;
+            height: 105px;
+            padding: 8px 8px 32px 8px;
+          }
+
+          .polaroid-icon {
+            font-size: 32px;
+          }
+
+          .polaroid-label {
+            font-size: 0.9rem;
+            padding: 6px 12px;
+          }
+
+          .hint {
+            font-size: 1rem;
+          }
+
+          .deco-1 { top: 10%; left: 5%; }
+          .deco-2 { top: 20%; right: 8%; }
+          .deco-3 { bottom: 25%; left: 5%; }
+          .deco-4 { bottom: 15%; right: 5%; }
+          .deco-5 { display: none; }
+        }
       `}</style>
     </div>
   );
