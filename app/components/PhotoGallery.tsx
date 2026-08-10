@@ -61,12 +61,14 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
 
   return (
     <div className="timeline-page">
+      <div className="timeline-bg-decoration"></div>
       <div className="timeline-header">
         <span className="emoji">📅</span>
         <h1>Наша история</h1>
       </div>
 
       <div className="timeline">
+        <div className="timeline-line"></div>
         {timelineEvents.map((event, index) => (
           <motion.div
             key={event.id}
@@ -109,39 +111,36 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
               exit={{ scale: 0.8, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <button className="close-btn" onClick={handleClose}>✕</button>
+              <button onClick={handleClose} style={{ position: 'absolute', top: '-15px', right: '-15px', width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(200,220,255,0.45)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.6)', boxShadow: '0 4px 20px rgba(100,150,200,0.15), inset 0 0 15px rgba(255,255,255,0.4)', color: '#6b8cae', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
               
-              <div className="event-header">
-                <span className="event-emoji">{selectedEvent.emoji}</span>
-                <h2>{selectedEvent.title}</h2>
-                <span className="event-date">{selectedEvent.displayDate}</span>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                <span style={{ fontSize: '2.5rem' }}>{selectedEvent.emoji}</span>
+                <h2 style={{ fontFamily: 'var(--font-caveat)', fontSize: '1.5rem', color: '#6b8cae', margin: '0' }}>{selectedEvent.title}</h2>
+                <span style={{ fontFamily: 'var(--font-caveat)', fontSize: '1rem', color: '#8aa8c2' }}>{selectedEvent.displayDate}</span>
               </div>
 
-              <div className="photo-nav-row">
-                <button className="photo-nav-btn" onClick={prevPhoto}>←</button>
-                <span className="photo-counter">{currentPhotoIndex + 1} / 4</span>
-                <button className="photo-nav-btn" onClick={nextPhoto}>→</button>
-              </div>
-              
-              <div className="photo-viewer">
-                <div className="photo-placeholder">📷</div>
-              </div>
-
-              <div className="photo-dots">
-                {[0, 1, 2, 3].map((i) => (
-                  <button
-                    key={i}
-                    className={`dot ${currentPhotoIndex === i ? 'active' : ''}`}
-                    onClick={() => setCurrentPhotoIndex(i)}
-                  />
-                ))}
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <button onClick={prevPhoto} style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(200,220,255,0.35)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.6)', boxShadow: '0 4px 20px rgba(100,150,200,0.15), inset 0 0 20px rgba(255,255,255,0.4)', fontSize: '1.8rem', cursor: 'pointer', color: '#6b8cae' }}>←</button>
+                  <div style={{ width: '280px', height: '280px', background: 'rgba(200,220,255,0.25)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 8px 32px rgba(100,150,200,0.1), inset 0 0 64px rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4rem' }}>📷</div>
+                  <button onClick={nextPhoto} style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(200,220,255,0.35)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.6)', boxShadow: '0 4px 20px rgba(100,150,200,0.15), inset 0 0 20px rgba(255,255,255,0.4)', fontSize: '1.8rem', cursor: 'pointer', color: '#6b8cae' }}>→</button>
+                </div>
+                <div style={{ display: 'flex', gap: '14px', background: 'rgba(200,220,255,0.25)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderRadius: '20px', padding: '12px 20px', boxShadow: '0 4px 20px rgba(100,150,200,0.1), inset 0 0 20px rgba(255,255,255,0.3)' }}>
+                  {[0, 1, 2, 3].map((i) => (
+                    <button
+                      key={i}
+                      onClick={() => setCurrentPhotoIndex(i)}
+                      style={{ width: '16px', height: '16px', borderRadius: '50%', background: currentPhotoIndex === i ? 'rgba(147,197,253,0.8)' : 'rgba(255,255,255,0.5)', border: '2px solid rgba(147,197,253,0.8)', cursor: 'pointer', boxShadow: currentPhotoIndex === i ? '0 0 12px rgba(147,197,253,0.6)' : 'none' }}
+                    />
+                  ))}
+                </div>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <style jsx>{`
+<style>{`
         .timeline-page {
           position: fixed;
           inset: 0;
@@ -162,8 +161,24 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           padding-top: 20px;
         }
 
-        .timeline-header .emoji {
+.timeline-header .emoji {
           font-size: 1.8rem;
+        }
+
+        .continue-btn {
+          position: fixed;
+          bottom: 30px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: linear-gradient(135deg, #5eead4, #2dd4bf);
+          border: none;
+          padding: 14px 32px;
+          border-radius: 25px;
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: 1.2rem;
+          color: #0f766e;
+          cursor: pointer;
+          box-shadow: 0 6px 25px rgba(20,184,166,0.3);
         }
 
         .timeline-header h1 {
@@ -180,9 +195,33 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           width: 100%;
           max-width: 400px;
           padding-bottom: 100px;
+          position: relative;
         }
 
-        .timeline-item {
+        .timeline-line {
+          position: absolute;
+          left: 50%;
+          top: 22px;
+          bottom: 22px;
+          width: 3px;
+          background: linear-gradient(180deg, #f9a8d4, #fbcfe8);
+          transform: translateX(-50%);
+          border-radius: 2px;
+          box-shadow: 0 0 10px rgba(249, 168, 212, 0.4);
+        }
+
+        .timeline-bg-decoration {
+          position: fixed;
+          inset: 0;
+          background: 
+            radial-gradient(circle at 20% 30%, rgba(249,168,212,0.12) 0%, transparent 40%),
+            radial-gradient(circle at 80% 70%, rgba(244,114,182,0.08) 0%, transparent 40%),
+            radial-gradient(circle at 50% 50%, rgba(236,72,153,0.06) 0%, transparent 60%);
+          pointer-events: none;
+          z-index: 0;
+        }
+
+.timeline-item {
           display: flex;
           align-items: flex-start;
           gap: 16px;
@@ -213,6 +252,8 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           flex-shrink: 0;
           box-shadow: 0 4px 15px rgba(0,0,0,0.08);
           transition: all 0.3s;
+          position: relative;
+          z-index: 10;
         }
 
         .timeline-item:hover .timeline-dot {
@@ -226,18 +267,36 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           gap: 2px;
           padding-top: 8px;
         }
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          background: #fff;
+          border: 3px solid #fce7f3;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.2rem;
+          flex-shrink: 0;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+          transition: all 0.3s;
+        }
+
+.timeline-item:hover .timeline-dot {
+          border-color: #f9a8d4;
+          box-shadow: 0 0 20px rgba(249, 168, 212, 0.4);
+        }
+
+        .timeline-content {
+          display: flex;
+          flex-direction: column;
+          gap: 2px;
+        }
 
         .timeline-date {
           font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
           font-size: 0.8rem;
           color: #be185d;
           white-space: nowrap;
-        }
-
-        .timeline-title {
-          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
-          font-size: 1.05rem;
-          color: #444;
         }
 
         .continue-btn {
@@ -259,7 +318,9 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
         .event-modal {
           position: fixed;
           inset: 0;
-          background: rgba(0,0,0,0.85);
+          background: rgba(100,140,180,0.3);
+          backdrop-filter: blur(8px);
+          -webkit-backdrop-filter: blur(8px);
           display: flex;
           align-items: center;
           justify-content: center;
@@ -268,137 +329,16 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
         }
 
         .event-card {
-          background: #fff;
-          border-radius: 16px;
+          background: rgba(200,220,255,0.2);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border-radius: 24px;
           padding: 32px 24px;
-          max-width: 360px;
+          max-width: 400px;
           width: 100%;
           position: relative;
-          box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        .close-btn {
-          position: absolute;
-          top: -15px;
-          right: -15px;
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          background: #fff;
-          border: none;
-          color: #be185d;
-          font-size: 1.2rem;
-          cursor: pointer;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-          z-index: 10;
-        }
-
-        .close-btn:hover {
-          background: #fce7f3;
-        }
-
-        .event-header {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 8px;
-          margin-bottom: 24px;
-          text-align: center;
-        }
-
-        .event-emoji {
-          font-size: 2.5rem;
-        }
-
-        .event-header h2 {
-          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
-          font-size: 1.5rem;
-          color: #be185d;
-          margin: 0;
-        }
-
-        .event-date {
-          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
-          font-size: 1rem;
-          color: #666;
-        }
-
-        .photo-nav-row {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 24px;
-          margin-bottom: 20px;
-          padding: 10px;
-          background: rgba(252, 231, 243, 0.5);
-          border-radius: 12px;
-        }
-
-        .photo-nav-btn {
-          width: 56px;
-          height: 56px;
-          border-radius: 50%;
-          background: #fff;
-          border: 4px solid #f9a8d4;
-          color: #be185d;
-          font-size: 1.8rem;
-          cursor: pointer;
-          transition: all 0.2s;
-          flex-shrink: 0;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-
-        .photo-nav-btn:hover {
-          background: #f9a8d4;
-          color: #fff;
-          transform: scale(1.15);
-        }
-
-        .photo-counter {
-          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
-          font-size: 1.4rem;
-          color: #be185d;
-          font-weight: 700;
-          min-width: 60px;
-          text-align: center;
-        }
-
-        .photo-viewer {
-          display: flex;
-          justify-content: center;
-          margin-bottom: 16px;
-        }
-
-        .photo-placeholder {
-          width: 200px;
-          height: 200px;
-          background: linear-gradient(135deg, #fce7f3, #fbcfe8);
-          border-radius: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 3rem;
-        }
-
-        .photo-dots {
-          display: flex;
-          justify-content: center;
-          gap: 14px;
-        }
-
-        .photo-dots .dot {
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background: #fff;
-          border: 3px solid #f9a8d4;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .photo-dots .dot.active {
-          background: #f9a8d4;
-          transform: scale(1.4);
+          border: 1px solid rgba(255,255,255,0.35);
+          box-shadow: 0 8px 32px rgba(100,150,200,0.12), inset 0 0 64px rgba(255,255,255,0.15);
         }
 
         @media (max-width: 480px) {
@@ -422,11 +362,19 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
 
           .event-card {
             padding: 24px 16px;
+            max-width: 320px;
           }
 
           .photo-placeholder {
-            width: 160px;
-            height: 160px;
+            width: 180px;
+            height: 180px;
+            font-size: 3rem;
+          }
+
+          .photo-nav-btn {
+            width: 44px;
+            height: 44px;
+            font-size: 1.4rem;
           }
         }
       `}</style>
