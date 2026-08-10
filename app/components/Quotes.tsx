@@ -95,18 +95,6 @@ export default function Quotes() {
     <>
       <ParticlesCanvas emojiSet={emojiSet} color="#fbbf24" count={15} />
 
-      <div className="deco-fixed deco-left-top">❤️</div>
-      <div className="deco-fixed deco-left-middle">📝</div>
-      <div className="deco-fixed deco-left-bottom">✨</div>
-      <div className="deco-fixed deco-right-top">🌹</div>
-      <div className="deco-fixed deco-right-middle">🦋</div>
-      <div className="deco-fixed deco-right-bottom">💌</div>
-      <div className="deco-fixed deco-bottom-center">
-        <span style={{ fontSize: '1.4rem' }}>💖</span>
-        <span style={{ fontSize: '1.2rem' }}>💘</span>
-        <span style={{ fontSize: '1.3rem' }}>💕</span>
-      </div>
-
       <div className="quotes-container">
         <div className={`quote-card ${animDirection === 'out' ? 'slide-out' : ''} ${animDirection === 'in' ? 'slide-in' : ''}`}>
           <div className="card-inner">

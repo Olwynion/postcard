@@ -59,18 +59,6 @@ export default function Love() {
     <>
       <ParticlesCanvas emojiSet={emojiSet} color="#f472b6" count={18} />
 
-      <div className="deco-fixed deco-left-top">🌹</div>
-      <div className="deco-fixed deco-left-middle">✨</div>
-      <div className="deco-fixed deco-left-bottom">💖</div>
-      <div className="deco-fixed deco-right-top">❤️</div>
-      <div className="deco-fixed deco-right-middle">💑</div>
-      <div className="deco-fixed deco-right-bottom">💋</div>
-      <div className="deco-fixed deco-bottom-center">
-        <span style={{ fontSize: '1.4rem' }}>💍</span>
-        <span style={{ fontSize: '1.4rem' }}>👫</span>
-        <span style={{ fontSize: '1.4rem' }}>💌</span>
-      </div>
-
       <div className="love-container">
         <div className="love-card">
           {!visibleSection && (

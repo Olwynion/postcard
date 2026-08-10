@@ -88,14 +88,6 @@ return (
     >
       <ParticlesCanvas emojiSet={emojiSets[tab]} count={12} />
       
-      <div className="deco-fixed deco-left-top">{decos.left[0]}</div>
-      <div className="deco-fixed deco-left-middle">{decos.left[1]}</div>
-      <div className="deco-fixed deco-left-bottom">{decos.left[2]}</div>
-      <div className="deco-fixed deco-right-top">{decos.right[0]}</div>
-      <div className="deco-fixed deco-right-middle">{decos.right[1]}</div>
-      <div className="deco-fixed deco-right-bottom">{decos.right[2]}</div>
-      <div className="deco-fixed deco-bottom-center">{decos.bottom[0]}{decos.bottom[1]}</div>
-      
       <header className="tab-header" style={{ background: style.headerBg }}>
         <span className="tab-icon">{style.emoji}</span>
         <span className="tab-name">{style.name}</span>
