@@ -35,7 +35,7 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
   const [mounted, setMounted] = useState(false);
   
   const particles = ['💕', '💗', '💖', '✨', '🌸', '💫'];
-  const timelineEmojis = ['💕', '💗', '✨', '🌸', '💖', '🌷', '💫', '💝', '🌺', '⭐', '💞', '🌹', '✨', '💕', '💗', '🌸', '💖', '🌷', '💫', '💝'];
+  const timelineEmojis = ['💕', '💗', '✨', '🌸', '💖', '🌷', '💫', '💝', '🌺', '⭐', '💞', '🌹', '💜', '🦋', '🌟'];
   const [particlesList, setParticlesList] = useState<{ id: number; emoji: string; left: number; delay: number; duration: number }[]>([]);
 
   const [showContinue, setShowContinue] = useState(false);
@@ -155,8 +155,8 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
         <motion.button 
           className="continue-btn" 
           onClick={onNext}
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0, y: 50, x: '-50%' }}
+          animate={{ opacity: 1, y: 0, x: '-50%' }}
           transition={{ duration: 0.3 }}
         >
           Продолжить 💕
@@ -310,7 +310,7 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           position: absolute;
           left: 50%;
           top: 34px;
-          bottom: 34px;
+          bottom: 134px;
           width: 3px;
           background: linear-gradient(180deg, #f9a8d4, #fbcfe8);
           transform: translateX(-50%);
@@ -323,35 +323,7 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           position: absolute;
           left: 50%;
           top: 34px;
-          bottom: 34px;
-          width: 60px;
-          transform: translateX(-50%);
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          align-items: center;
-          pointer-events: none;
-          z-index: 2;
-        }
-
-        .timeline-line {
-          position: absolute;
-          left: 50%;
-          top: 10px;
-          bottom: 100px;
-          width: 3px;
-          background: linear-gradient(180deg, #f9a8d4, #fbcfe8);
-          transform: translateX(-50%);
-          border-radius: 2px;
-          box-shadow: 0 0 10px rgba(249, 168, 212, 0.4);
-          z-index: 1;
-        }
-
-        .timeline-hearts {
-          position: absolute;
-          left: 50%;
-          top: 10px;
-          bottom: 180px;
+          bottom: 134px;
           width: 60px;
           transform: translateX(-50%);
           display: flex;
@@ -544,7 +516,6 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           position: fixed;
           bottom: 30px;
           left: 50%;
-          transform: translateX(-50%);
           background: #fce7f3;
           border: none;
           padding: 14px 32px;
@@ -581,43 +552,6 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           position: relative;
           border: 1px solid rgba(255,255,255,0.35);
           box-shadow: 0 8px 32px rgba(100,150,200,0.12), inset 0 0 64px rgba(255,255,255,0.15);
-        }
-
-        .timeline {
-          display: flex;
-          flex-direction: column;
-          gap: 0;
-          width: 100%;
-          max-width: 400px;
-          position: relative;
-        }
-
-        .timeline-line {
-          position: absolute;
-          left: 50%;
-          top: 34px;
-          bottom: 34px;
-          width: 3px;
-          background: linear-gradient(180deg, #f9a8d4, #fbcfe8);
-          transform: translateX(-50%);
-          border-radius: 2px;
-          box-shadow: 0 0 10px rgba(249, 168, 212, 0.4);
-          z-index: 1;
-        }
-
-        .timeline-hearts {
-          position: absolute;
-          left: 50%;
-          top: 34px;
-          bottom: 34px;
-          width: 60px;
-          transform: translateX(-50%);
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          align-items: center;
-          pointer-events: none;
-          z-index: 2;
         }
 
         .timeline-header h1 {
