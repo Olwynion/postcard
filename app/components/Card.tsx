@@ -20,6 +20,7 @@ export default function Card({ onOpen }: { onOpen: () => void }) {
   return (
     <div className="card-container">
       <ParticlesCanvas emojiSet={emojiSet} color="#f9a8d4" count={50} />
+      <ParticlesCanvas emojiSet={emojiSet} color="#f9a8d4" count={50} />
 
       <div className="card-perspective">
         {phase !== 'reveal' && (

@@ -971,10 +971,6 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
             padding-right: 16px;
           }
 
-          .timeline-line {
-            display: none;
-          }
-
           .timeline-hearts {
             display: none;
           }
