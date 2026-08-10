@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import ParticlesCanvas from './ParticlesCanvas';
 import Confetti from './Confetti';
 

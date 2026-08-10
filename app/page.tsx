@@ -18,27 +18,22 @@ const fadeVariants = {
 
 export default function Home() {
   const [screen, setScreen] = useState<Screen>('card');
-  const [direction, setDirection] = useState(1);
   const currentIndex = screenOrder.indexOf(screen);
   const touchStart = useRef({ x: 0, y: 0 });
 
-  const goTo = useCallback((next: Screen, smooth = true) => {
-    const nextIndex = screenOrder.indexOf(next);
-    setDirection(smooth ? (nextIndex > currentIndex ? 1 : -1) : 0);
+  const goTo = useCallback((next: Screen) => {
     setScreen(next);
-  }, [currentIndex]);
+  }, []);
 
-  const handleCardOpen = useCallback(() => goTo('message', false), [goTo]);
+  const handleCardOpen = useCallback(() => goTo('message'), [goTo]);
 
   const handleSwipe = (dx: number, dy: number) => {
     if (Math.abs(dx) < Math.abs(dy) * 1.5) return;
     if (Math.abs(dx) < 80) return;
 
     if (dx < 0 && currentIndex < screenOrder.length - 1) {
-      setDirection(1);
       setScreen(screenOrder[currentIndex + 1]);
     } else if (dx > 0 && currentIndex > 0) {
-      setDirection(-1);
       setScreen(screenOrder[currentIndex - 1]);
     }
   };
@@ -55,7 +50,7 @@ export default function Home() {
 
   return (
     <div className="app" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-      <AnimatePresence mode="wait" custom={direction}>
+      <AnimatePresence mode="wait">
         <motion.div
           key={screen}
           variants={fadeVariants}
