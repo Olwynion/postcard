@@ -69,7 +69,7 @@ export default function Home() {
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.3, ease: 'easeInOut' }}
+          transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
           style={{ position: 'fixed', inset: 0 }}
         >
           {screen === 'card' && <Card onOpen={handleCardOpen} />}

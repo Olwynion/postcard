@@ -11,6 +11,7 @@ export default function LoveMessage({ onBack }: { onBack?: () => void }) {
   const [visible, setVisible] = useState(false);
   const [printedText, setPrintedText] = useState('');
   const [showHeart, setShowHeart] = useState(false);
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   const finalMessage = "Я люблю тебя. Спасибо за этот год. За каждый день. За всё.";
 
@@ -28,6 +29,25 @@ export default function LoveMessage({ onBack }: { onBack?: () => void }) {
       }
     }, 60);
 
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const startDate = new Date('2025-08-30T00:00:00').getTime();
+
+    const tick = () => {
+      const diff = Date.now() - startDate;
+      if (diff <= 0) return;
+      setTimeLeft({
+        days: Math.floor(diff / 86400000),
+        hours: Math.floor((diff % 86400000) / 3600000),
+        minutes: Math.floor((diff % 3600000) / 60000),
+        seconds: Math.floor((diff % 60000) / 1000),
+      });
+    };
+
+    tick();
+    const interval = setInterval(tick, 1000);
     return () => clearInterval(interval);
   }, []);
 
@@ -81,6 +101,22 @@ export default function LoveMessage({ onBack }: { onBack?: () => void }) {
             <span>✨</span>
           </div>
 
+          {showHeart && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              style={{ width: '100%' }}
+            >
+              <div className="timer">
+                <span className="timer-label">Мы вместе уже</span>
+                <span className="timer-value">
+                  {timeLeft.days} дней {String(timeLeft.hours).padStart(2, '0')} часов {String(timeLeft.minutes).padStart(2, '0')} минут {String(timeLeft.seconds).padStart(2, '0')} секунд
+                </span>
+              </div>
+            </motion.div>
+          )}
+
           {showHeart && onBack && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -108,6 +144,7 @@ export default function LoveMessage({ onBack }: { onBack?: () => void }) {
           transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
           z-index: 100;
           background: linear-gradient(135deg, #fff5f7 0%, #ffeef2 50%, #fdf2f8 100%);
+          overflow-y: auto;
         }
 
         .love-container.visible {
@@ -127,6 +164,7 @@ export default function LoveMessage({ onBack }: { onBack?: () => void }) {
           align-items: center;
           gap: 24px;
           position: relative;
+          margin: auto;
         }
 
         .hearts-row {
@@ -245,6 +283,33 @@ export default function LoveMessage({ onBack }: { onBack?: () => void }) {
         @keyframes sparkle {
           0%, 100% { opacity: 0.4; transform: scale(0.8); }
           50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .timer {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
+          width: 100%;
+          padding: 16px 0;
+          border-top: 1px solid rgba(190, 24, 93, 0.12);
+          border-bottom: 1px solid rgba(190, 24, 93, 0.12);
+        }
+
+        .timer-label {
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: 1rem;
+          color: #be185d;
+          opacity: 0.7;
+        }
+
+        .timer-value {
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: 1.2rem;
+          font-weight: 700;
+          color: #be185d;
+          letter-spacing: 0.02em;
+          white-space: nowrap;
         }
 
         .back-btn {
