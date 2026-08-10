@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useInView } from 'framer-motion';
 
 interface TimelineEvent {
   id: string;
@@ -28,6 +28,30 @@ const timelineEvents: TimelineEvent[] = [
   { id: '14', date: '2026-05-30', displayDate: '30 май 2026', title: '9 месяцев', emoji: '💗' },
   { id: '15', date: '2026-06-01', displayDate: '1 июн 2026', title: 'Наше совместное лето', emoji: '☀️' },
 ];
+
+function TimelineItem({ event, index, onClick }: { event: TimelineEvent; index: number; onClick: (e: TimelineEvent) => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true, margin: '-50px' });
+
+  return (
+    <motion.div
+      ref={ref}
+      className="timeline-item"
+      initial={{ opacity: 0, y: 30 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+      onClick={() => onClick(event)}
+    >
+      <div className="timeline-dot">
+        <span>{event.emoji}</span>
+      </div>
+      <div className="timeline-content">
+        <span className="timeline-date">{event.displayDate}</span>
+        <span className="timeline-title">{event.title}</span>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
@@ -131,22 +155,7 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           ))}
         </div>
         {timelineEvents.map((event, index) => (
-          <motion.div
-            key={event.id}
-            className="timeline-item"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
-            onClick={() => handleEventClick(event)}
-          >
-            <div className="timeline-dot">
-              <span>{event.emoji}</span>
-            </div>
-            <div className="timeline-content">
-              <span className="timeline-date">{event.displayDate}</span>
-              <span className="timeline-title">{event.title}</span>
-            </div>
-          </motion.div>
+          <TimelineItem key={event.id} event={event} index={index} onClick={handleEventClick} />
         ))}
         <div ref={sentinelRef} style={{ height: '1px' }} />
       </div>

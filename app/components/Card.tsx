@@ -7,35 +7,67 @@ import ParticlesCanvas from './ParticlesCanvas';
 const emojiSet = ['💕', '✨', '💖', '🌸', '❤️', '💗'];
 
 export default function Card({ onOpen }: { onOpen: () => void }) {
-  const [isClosing, setIsClosing] = useState(false);
+  const [phase, setPhase] = useState<'idle' | 'closing' | 'reveal'>('idle');
 
   const handleClick = () => {
-    if (isClosing) return;
-    setIsClosing(true);
-    setTimeout(onOpen, 700);
+    if (phase !== 'idle') return;
+    setPhase('closing');
+
+    setTimeout(() => setPhase('reveal'), 700);
+    setTimeout(() => onOpen(), 3500);
   };
 
   return (
-    <div className={`card-container ${isClosing ? 'closing' : ''}`} onClick={handleClick}>
+    <div className="card-container">
       <ParticlesCanvas emojiSet={emojiSet} color="#f9a8d4" count={50} />
 
-      <div className="card-content">
-        <div className="hearts-row">
-          <span className="floating-heart left">💕</span>
-          <span className="main-heart">❤️</span>
-          <span className="floating-heart right">💕</span>
-        </div>
+      <div className="card-perspective">
+        {phase !== 'reveal' && (
+          <motion.div
+            className="card-book"
+            initial={false}
+            animate={phase === 'closing' ? { scaleX: 0, opacity: 0 } : { scaleX: 1, opacity: 1 }}
+            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+            style={{ transformOrigin: 'left center' }}
+            onClick={handleClick}
+          >
+            <div className="card-content">
+              <div className="hearts-row">
+                <span className="floating-heart left">💕</span>
+                <span className="main-heart">❤️</span>
+                <span className="floating-heart right">💕</span>
+              </div>
 
-        <div className="card-text">
-          <h1 className="card-title">Наш первый год вместе</h1>
-          <p className="card-subtitle">Коснись, чтобы открыть</p>
-        </div>
+              <div className="card-text">
+                <h1 className="card-title">Наш первый год вместе</h1>
+                <p className="card-subtitle">Коснись, чтобы открыть</p>
+              </div>
 
-        <div className="sparkles">
-          <span>✨</span>
-          <span>💖</span>
-          <span>✨</span>
-        </div>
+              <div className="sparkles">
+                <span>✨</span>
+                <span>💖</span>
+                <span>✨</span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {phase === 'reveal' && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={{
+              opacity: [0, 1, 1, 0],
+              scale: [0.6, 1, 1, 0.85],
+            }}
+            transition={{ duration: 2.8, times: [0, 0.2, 0.6, 1], ease: 'easeInOut' }}
+          >
+            <div className="for-you">
+              <span className="for-you-emoji">💕</span>
+              <p className="for-you-text">Для тебя</p>
+              <span className="for-you-emoji">💕</span>
+            </div>
+          </motion.div>
+        )}
       </div>
 
       <style jsx>{`
@@ -48,21 +80,49 @@ export default function Card({ onOpen }: { onOpen: () => void }) {
           cursor: pointer;
           z-index: 200;
           background: linear-gradient(135deg, #fff5f7 0%, #ffeef2 50%, #fdf2f8 100%);
-          transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .card-container.closing {
-          opacity: 0;
-          transform: scale(1.15);
+        .card-perspective {
+          perspective: 1000px;
+          position: relative;
+          z-index: 10;
+        }
+
+        .card-book {
+          background: linear-gradient(145deg, #fff, #fef2f2);
+          border-radius: 20px;
+          padding: 48px 40px;
+          box-shadow: 0 20px 60px rgba(236, 72, 153, 0.15);
+          cursor: pointer;
         }
 
         .card-content {
-          position: relative;
-          z-index: 10;
           display: flex;
           flex-direction: column;
           align-items: center;
           gap: 40px;
+        }
+
+        .for-you {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 20px;
+          padding: 20px 40px;
+        }
+
+        .for-you-text {
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-weight: 700;
+          font-size: clamp(3rem, 10vw, 5rem);
+          color: #be185d;
+          margin: 0;
+          text-shadow: 0 4px 30px rgba(236, 72, 153, 0.3);
+          letter-spacing: 0.02em;
+        }
+
+        .for-you-emoji {
+          font-size: clamp(1.5rem, 5vw, 2.5rem);
         }
 
         .hearts-row {
@@ -157,6 +217,14 @@ export default function Card({ onOpen }: { onOpen: () => void }) {
         }
 
         @media (max-width: 480px) {
+          .card-book {
+            padding: 32px 24px;
+          }
+
+          .for-you {
+            padding: 16px 24px;
+          }
+
           .hearts-row {
             gap: 12px;
           }

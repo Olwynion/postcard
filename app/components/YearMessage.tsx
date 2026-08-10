@@ -22,7 +22,7 @@ export default function YearMessage({ onNext }: { onNext: () => void }) {
   const [showContinue, setShowContinue] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => setVisible(true), 100);
+    setVisible(true);
 
     let charIndex = 0;
     const interval = setInterval(() => {

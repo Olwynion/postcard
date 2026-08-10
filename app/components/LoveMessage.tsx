@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import ParticlesCanvas from './ParticlesCanvas';
+import Confetti from './Confetti';
 
 const emojiSet = ['❤️', '💕', '💖', '💗', '🌹', '💋', '💌', '✨'];
 
@@ -32,6 +33,7 @@ export default function LoveMessage({ onBack }: { onBack?: () => void }) {
 
   return (
     <>
+      <Confetti count={80} />
       <ParticlesCanvas emojiSet={emojiSet} color="#f472b6" count={35} />
 
       <div className={`love-container ${visible ? 'visible' : ''}`}>
