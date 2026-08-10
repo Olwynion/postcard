@@ -10,16 +10,10 @@ import LoveMessage from './components/LoveMessage';
 type Screen = 'card' | 'message' | 'moments' | 'love';
 const screenOrder: Screen[] = ['card', 'message', 'moments', 'love'];
 
-const slideVariants = {
-  enter: (dir: number) => ({
-    x: dir !== 0 ? (dir > 0 ? '100%' : '-100%') : 0,
-    opacity: 0,
-  }),
-  center: { x: 0, opacity: 1 },
-  exit: (dir: number) => ({
-    x: dir !== 0 ? (dir > 0 ? '-100%' : '100%') : 0,
-    opacity: dir !== 0 ? 0 : 1,
-  }),
+const fadeVariants = {
+  enter: { opacity: 0 },
+  center: { opacity: 1 },
+  exit: { opacity: 0 },
 };
 
 export default function Home() {
@@ -64,12 +58,11 @@ export default function Home() {
       <AnimatePresence mode="wait" custom={direction}>
         <motion.div
           key={screen}
-          custom={direction}
-          variants={slideVariants}
+          variants={fadeVariants}
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ duration: 0.6, ease: [0.34, 1.56, 0.64, 1] }}
+          transition={{ duration: 0.5, ease: 'easeInOut' }}
           style={{ position: 'fixed', inset: 0 }}
         >
           {screen === 'card' && <Card onOpen={handleCardOpen} />}

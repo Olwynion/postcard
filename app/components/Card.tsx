@@ -13,8 +13,8 @@ export default function Card({ onOpen }: { onOpen: () => void }) {
     if (phase !== 'idle') return;
     setPhase('closing');
 
-    setTimeout(() => setPhase('reveal'), 700);
-    setTimeout(() => onOpen(), 3500);
+    setTimeout(() => setPhase('reveal'), 800);
+    setTimeout(() => onOpen(), 2500);
   };
 
   return (
@@ -26,9 +26,8 @@ export default function Card({ onOpen }: { onOpen: () => void }) {
           <motion.div
             className="card-book"
             initial={false}
-            animate={phase === 'closing' ? { scaleX: 0, opacity: 0 } : { scaleX: 1, opacity: 1 }}
-            transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-            style={{ transformOrigin: 'left center' }}
+            animate={phase === 'closing' ? { opacity: 0 } : { opacity: 1 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
             onClick={handleClick}
           >
             <div className="card-content">
@@ -54,12 +53,9 @@ export default function Card({ onOpen }: { onOpen: () => void }) {
 
         {phase === 'reveal' && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.6 }}
-            animate={{
-              opacity: [0, 1, 1, 0],
-              scale: [0.6, 1, 1, 0.85],
-            }}
-            transition={{ duration: 2.8, times: [0, 0.2, 0.6, 1], ease: 'easeInOut' }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 1, 1, 0] }}
+            transition={{ duration: 2.5, times: [0, 0.2, 0.6, 1], ease: 'easeInOut' }}
           >
             <div className="for-you">
               <span className="for-you-emoji">💕</span>

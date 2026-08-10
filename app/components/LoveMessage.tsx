@@ -78,16 +78,14 @@ export default function LoveMessage({ onBack }: { onBack?: () => void }) {
           </div>
 
           {showHeart && (
-            <motion.div 
+            <div 
               className="final-hearts"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ type: 'spring', damping: 12, stiffness: 200 }}
+              style={{ animation: 'fadeIn 0.5s ease forwards' }}
             >
               <span>❤️</span>
               <span>💕</span>
               <span>❤️</span>
-            </motion.div>
+            </div>
           )}
 
           <div className="signature">
@@ -102,11 +100,8 @@ export default function LoveMessage({ onBack }: { onBack?: () => void }) {
           </div>
 
           {showHeart && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              style={{ width: '100%' }}
+            <div
+              style={{ width: '100%', animation: 'fadeIn 0.5s ease 0.3s forwards', opacity: 0 }}
             >
               <div className="timer">
                 <span className="timer-label">Мы вместе уже</span>
@@ -114,19 +109,17 @@ export default function LoveMessage({ onBack }: { onBack?: () => void }) {
                   {timeLeft.days} дней {String(timeLeft.hours).padStart(2, '0')} часов {String(timeLeft.minutes).padStart(2, '0')} минут {String(timeLeft.seconds).padStart(2, '0')} секунд
                 </span>
               </div>
-            </motion.div>
+            </div>
           )}
 
           {showHeart && onBack && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.3 }}
+            <div
+              style={{ animation: 'fadeIn 0.5s ease 0.5s forwards', opacity: 0 }}
             >
               <button className="back-btn" onClick={onBack}>
                 ← Наши моменты
               </button>
-            </motion.div>
+            </div>
           )}
         </div>
       </div>
@@ -140,8 +133,7 @@ export default function LoveMessage({ onBack }: { onBack?: () => void }) {
           justify-content: center;
           padding: 20px;
           opacity: 0;
-          transform: scale(0.95);
-          transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+          transition: opacity 0.8s ease;
           z-index: 100;
           background: linear-gradient(135deg, #fff5f7 0%, #ffeef2 50%, #fdf2f8 100%);
           overflow-y: auto;
@@ -149,7 +141,6 @@ export default function LoveMessage({ onBack }: { onBack?: () => void }) {
 
         .love-container.visible {
           opacity: 1;
-          transform: scale(1);
         }
 
         .love-card {
@@ -180,6 +171,11 @@ export default function LoveMessage({ onBack }: { onBack?: () => void }) {
         @keyframes pulse {
           0%, 100% { transform: scale(1); }
           50% { transform: scale(1.15); }
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
 
         .love-title {

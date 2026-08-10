@@ -89,14 +89,12 @@ export default function YearMessage({ onNext }: { onNext: () => void }) {
           justify-content: center;
           padding: 20px;
           opacity: 0;
-          transform: scale(0.95);
-          transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+          transition: opacity 0.8s ease;
           z-index: 100;
         }
 
         .message-container.visible {
           opacity: 1;
-          transform: scale(1);
         }
 
         .message-card {
