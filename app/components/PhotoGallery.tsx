@@ -33,9 +33,21 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
   const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
+  
+  const particles = ['💕', '💗', '💖', '✨', '🌸', '💫'];
+  const timelineEmojis = ['💕', '💗', '✨', '🌸', '💖', '🌷', '💫', '💝', '🌺', '⭐', '💞', '🌹', '✨', '💕', '💗', '🌸', '💖', '🌷', '💫', '💝'];
+  const [particlesList, setParticlesList] = useState<{ id: number; emoji: string; left: number; delay: number; duration: number }[]>([]);
 
   useEffect(() => {
     setMounted(true);
+    const newParticles = Array.from({ length: 15 }, (_, i) => ({
+      id: i,
+      emoji: particles[Math.floor(Math.random() * particles.length)],
+      left: Math.random() * 100,
+      delay: Math.random() * 5,
+      duration: 8 + Math.random() * 4,
+    }));
+    setParticlesList(newParticles);
   }, []);
 
   const handleEventClick = (event: TimelineEvent) => {
@@ -61,7 +73,28 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
 
   return (
     <div className="timeline-page">
-      <div className="timeline-bg-decoration"></div>
+      <div className="particles-container">
+        {particlesList.map((p) => (
+          <span
+            key={p.id}
+            className="falling-particle"
+            style={{ left: `${p.left}%`, animationDelay: `${p.delay}s`, animationDuration: `${p.duration}s` }}
+          >
+            {p.emoji}
+          </span>
+        ))}
+      </div>
+      <div className="timeline-bg-decoration">
+        <div className="bg-circle bg-circle-1"></div>
+        <div className="bg-circle bg-circle-2"></div>
+        <div className="bg-circle bg-circle-3"></div>
+        <span className="sparkle">✨</span>
+        <span className="sparkle">💕</span>
+        <span className="sparkle">💗</span>
+        <span className="sparkle">✨</span>
+        <span className="sparkle">💕</span>
+        <span className="sparkle">💖</span>
+      </div>
       <div className="timeline-header">
         <span className="emoji">📅</span>
         <h1>Наша история</h1>
@@ -69,6 +102,13 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
 
       <div className="timeline">
         <div className="timeline-line"></div>
+        <div className="timeline-hearts">
+          {timelineEmojis.map((emoji, i) => (
+            <span key={i} className="timeline-emoji" style={{ animationDelay: `${i * 0.15}s` }}>
+              {emoji}
+            </span>
+          ))}
+        </div>
         {timelineEvents.map((event, index) => (
           <motion.div
             key={event.id}
@@ -150,7 +190,34 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           padding: 20px;
           z-index: 100;
           background: linear-gradient(135deg, #fff5f7 0%, #ffeef2 50%, #fdf2f8 100%);
+          background-size: 200% 200%;
+          animation: gradientShift 8s ease infinite;
           overflow-y: auto;
+        }
+
+        @keyframes gradientShift {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
+        .timeline-page::before {
+          content: '';
+          position: fixed;
+          inset: 0;
+          background: 
+            linear-gradient(135deg, rgba(255,182,193,0.3) 0%, transparent 50%),
+            linear-gradient(225deg, rgba(255,192,203,0.3) 0%, transparent 50%);
+          background-size: 200% 200%;
+          animation: gradientOverlay 10s ease infinite;
+          pointer-events: none;
+          z-index: 0;
+        }
+
+        @keyframes gradientOverlay {
+          0% { background-position: 0% 0%; opacity: 0.5; }
+          50% { background-position: 100% 100%; opacity: 0.8; }
+          100% { background-position: 0% 0%; opacity: 0.5; }
         }
 
         .timeline-header {
@@ -165,27 +232,40 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           font-size: 1.8rem;
         }
 
-        .continue-btn {
+        .particles-container {
           position: fixed;
-          bottom: 30px;
-          left: 50%;
-          transform: translateX(-50%);
-          background: linear-gradient(135deg, #5eead4, #2dd4bf);
-          border: none;
-          padding: 14px 32px;
-          border-radius: 25px;
-          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
-          font-size: 1.2rem;
-          color: #0f766e;
-          cursor: pointer;
-          box-shadow: 0 6px 25px rgba(20,184,166,0.3);
+          inset: 0;
+          overflow: hidden;
+          pointer-events: none;
+          z-index: 1;
         }
 
-        .timeline-header h1 {
-          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
-          font-size: 2rem;
-          color: #be185d;
-          margin: 0;
+        .falling-particle {
+          position: absolute;
+          top: -30px;
+          font-size: 1.2rem;
+          opacity: 0.6;
+          animation: fall linear infinite;
+          text-shadow: 0 0 10px rgba(249,168,212,0.5);
+        }
+
+        @keyframes fall {
+          0% {
+            top: -30px;
+            transform: rotate(0deg) translateX(0);
+            opacity: 0;
+          }
+          10% {
+            opacity: 0.6;
+          }
+          90% {
+            opacity: 0.6;
+          }
+          100% {
+            top: 100vh;
+            transform: rotate(360deg) translateX(20px);
+            opacity: 0;
+          }
         }
 
         .timeline {
@@ -208,17 +288,140 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           transform: translateX(-50%);
           border-radius: 2px;
           box-shadow: 0 0 10px rgba(249, 168, 212, 0.4);
+          z-index: 1;
+        }
+
+        .timeline-hearts {
+          position: absolute;
+          left: 50%;
+          top: 22px;
+          bottom: 22px;
+          width: 60px;
+          transform: translateX(-50%);
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          align-items: center;
+          pointer-events: none;
+          z-index: 2;
+        }
+
+        .timeline-emoji {
+          font-size: 0.8rem;
+          animation: pulse 2.5s ease-in-out infinite;
+          text-shadow: 0 0 8px rgba(249,168,212,0.8);
+          filter: drop-shadow(0 0 3px rgba(249,168,212,0.5));
+        }
+
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); opacity: 0.6; }
+          50% { transform: scale(1.3); opacity: 1; }
         }
 
         .timeline-bg-decoration {
           position: fixed;
           inset: 0;
           background: 
-            radial-gradient(circle at 20% 30%, rgba(249,168,212,0.12) 0%, transparent 40%),
-            radial-gradient(circle at 80% 70%, rgba(244,114,182,0.08) 0%, transparent 40%),
-            radial-gradient(circle at 50% 50%, rgba(236,72,153,0.06) 0%, transparent 60%);
+            radial-gradient(circle at 20% 30%, rgba(249,168,212,0.15) 0%, transparent 40%),
+            radial-gradient(circle at 80% 70%, rgba(244,114,182,0.1) 0%, transparent 40%),
+            radial-gradient(circle at 50% 50%, rgba(236,72,153,0.08) 0%, transparent 60%);
           pointer-events: none;
           z-index: 0;
+          overflow: hidden;
+        }
+
+        .timeline-bg-decoration::before,
+        .timeline-bg-decoration::after {
+          content: '';
+          position: absolute;
+          border-radius: 50%;
+          animation: float 8s ease-in-out infinite;
+        }
+
+        .timeline-bg-decoration::before {
+          width: 300px;
+          height: 300px;
+          top: 10%;
+          left: -100px;
+          background: radial-gradient(circle, rgba(249,168,212,0.2) 0%, transparent 70%);
+        }
+
+        .timeline-bg-decoration::after {
+          width: 250px;
+          height: 250px;
+          bottom: 20%;
+          right: -80px;
+          background: radial-gradient(circle, rgba(244,114,182,0.15) 0%, transparent 70%);
+          animation-delay: -4s;
+        }
+
+        @keyframes float {
+          0%, 100% { transform: translateY(0) scale(1); }
+          50% { transform: translateY(-30px) scale(1.05); }
+        }
+
+        .bg-circle {
+          position: absolute;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(251,207,232,0.2) 0%, transparent 70%);
+          animation: float 6s ease-in-out infinite;
+        }
+
+        .bg-circle-1 {
+          width: 180px;
+          height: 180px;
+          top: 40%;
+          left: 70%;
+          animation-delay: -2s;
+        }
+
+        .bg-circle-2 {
+          width: 120px;
+          height: 120px;
+          top: 65%;
+          left: 15%;
+          animation-delay: -3s;
+        }
+
+        .bg-circle-3 {
+          width: 100px;
+          height: 100px;
+          top: 25%;
+          right: 20%;
+          animation-delay: -5s;
+        }
+
+        .sparkle {
+          position: absolute;
+          font-size: 1.2rem;
+          opacity: 0.4;
+          animation: sparkle 3s ease-in-out infinite;
+          pointer-events: none;
+          z-index: 1;
+        }
+
+        .sparkle:nth-child(1) { top: 15%; left: 10%; animation-delay: 0s; }
+        .sparkle:nth-child(2) { top: 35%; right: 15%; animation-delay: 0.5s; }
+        .sparkle:nth-child(3) { top: 55%; left: 8%; animation-delay: 1s; }
+        .sparkle:nth-child(4) { top: 75%; right: 12%; animation-delay: 1.5s; }
+        .sparkle:nth-child(5) { top: 20%; left: 85%; animation-delay: 2s; }
+        .sparkle:nth-child(6) { top: 85%; left: 25%; animation-delay: 2.5s; }
+
+        @keyframes sparkle {
+          0%, 100% { opacity: 0.3; transform: scale(1) rotate(0deg); }
+          50% { opacity: 0.7; transform: scale(1.3) rotate(15deg); }
+        }
+
+        .timeline-connector {
+          position: absolute;
+          width: 8px;
+          height: 8px;
+          background: #f9a8d4;
+          border-radius: 50%;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 5;
+          box-shadow: 0 0 10px rgba(249,168,212,0.6);
         }
 
 .timeline-item {
@@ -267,18 +470,6 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           gap: 2px;
           padding-top: 8px;
         }
-          width: 44px;
-          height: 44px;
-          border-radius: 50%;
-          background: #fff;
-          border: 3px solid #fce7f3;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 1.2rem;
-          flex-shrink: 0;
-          box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-          transition: all 0.3s;
         }
 
 .timeline-item:hover .timeline-dot {
