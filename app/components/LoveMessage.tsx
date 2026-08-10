@@ -6,7 +6,7 @@ import ParticlesCanvas from './ParticlesCanvas';
 
 const emojiSet = ['❤️', '💕', '💖', '💗', '🌹', '💋', '💌', '✨'];
 
-export default function LoveMessage() {
+export default function LoveMessage({ onBack }: { onBack?: () => void }) {
   const [visible, setVisible] = useState(false);
   const [printedText, setPrintedText] = useState('');
   const [showHeart, setShowHeart] = useState(false);
@@ -78,6 +78,18 @@ export default function LoveMessage() {
             <span>💖</span>
             <span>✨</span>
           </div>
+
+          {showHeart && onBack && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.3 }}
+            >
+              <button className="back-btn" onClick={onBack}>
+                ← Наши моменты
+              </button>
+            </motion.div>
+          )}
         </div>
       </div>
 
@@ -231,6 +243,24 @@ export default function LoveMessage() {
         @keyframes sparkle {
           0%, 100% { opacity: 0.4; transform: scale(0.8); }
           50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .back-btn {
+          background: #fce7f3;
+          border: none;
+          padding: 10px 28px;
+          border-radius: 25px;
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: 1.1rem;
+          color: #be185d;
+          cursor: pointer;
+          box-shadow: 0 4px 15px rgba(236, 72, 153, 0.15);
+          transition: all 0.2s;
+        }
+
+        .back-btn:hover {
+          box-shadow: 0 6px 25px rgba(236, 72, 153, 0.25);
+          transform: translateY(-2px);
         }
 
         @media (max-width: 480px) {

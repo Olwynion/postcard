@@ -38,7 +38,7 @@ export default function Home() {
       )}
 
       {screen === 'love' && (
-        <LoveMessage />
+        <LoveMessage onBack={() => setScreen('moments')} />
       )}
     </div>
   );
