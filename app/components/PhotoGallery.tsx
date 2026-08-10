@@ -3,30 +3,119 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 
+interface MediaItem {
+  type: 'photo' | 'video';
+  caption: string;
+  emoji: string;
+  gradient: string;
+}
+
 interface TimelineEvent {
   id: string;
   date: string;
   displayDate: string;
   title: string;
   emoji: string;
+  media: MediaItem[];
 }
 
 const timelineEvents: TimelineEvent[] = [
-  { id: '1', date: '2025-08-10', displayDate: '10 авг 2025', title: 'Первая встреча', emoji: '👀' },
-  { id: '2', date: '2025-08-17', displayDate: '17 авг 2025', title: 'Первое предложение', emoji: '💍' },
-  { id: '3', date: '2025-08-30', displayDate: '30 авг 2025', title: 'Начало отношений', emoji: '❤️' },
-  { id: '4', date: '2025-09-30', displayDate: '30 сен 2025', title: 'Первый месяц', emoji: '💕' },
-  { id: '5', date: '2025-10-06', displayDate: '6 окт 2025', title: 'Твой день рождения', emoji: '🎂' },
-  { id: '6', date: '2025-10-11', displayDate: '11 окт 2025', title: 'Первый концерт', emoji: '🎵' },
-  { id: '7', date: '2025-10-14', displayDate: '14 окт 2025', title: 'Маленькая мечта', emoji: '✨' },
-  { id: '8', date: '2025-11-22', displayDate: '22 ноя 2025', title: 'Первая поездка', emoji: '✈️' },
-  { id: '9', date: '2025-12-30', displayDate: '30 дек 2025 - 1 янв 2026', title: 'Новый год', emoji: '🎆' },
-  { id: '10', date: '2026-01-25', displayDate: '25 янв 2026', title: 'Новогодняя Москва', emoji: '🏙️' },
-  { id: '11', date: '2026-02-28', displayDate: '28 фев 2026', title: '6 месяцев', emoji: '💖' },
-  { id: '12', date: '2026-02-28', displayDate: '28 фев - 12 май 2026', title: 'Микс', emoji: '📸' },
-  { id: '13', date: '2026-05-12', displayDate: '12 май 2026', title: 'Мой ДР', emoji: '🎉' },
-  { id: '14', date: '2026-05-30', displayDate: '30 май 2026', title: '9 месяцев', emoji: '💗' },
-  { id: '15', date: '2026-06-01', displayDate: '1 июн 2026', title: 'Наше совместное лето', emoji: '☀️' },
+  {
+    id: '1', date: '2025-08-10', displayDate: '10 авг 2025', title: 'Первая встреча', emoji: '👀',
+    media: [
+      { type: 'photo', caption: 'Тот самый день, когда мы встретились', emoji: '☕', gradient: 'linear-gradient(135deg, #fce7f3, #fbcfe8)' },
+      { type: 'photo', caption: 'Наша первая фотка вместе', emoji: '📸', gradient: 'linear-gradient(135deg, #fef3c7, #fde68a)' },
+    ],
+  },
+  {
+    id: '2', date: '2025-08-17', displayDate: '17 авг 2025', title: 'Первое предложение', emoji: '💍',
+    media: [
+      { type: 'photo', caption: 'Он сказал "давай попробуем"', emoji: '💍', gradient: 'linear-gradient(135deg, #ede9fe, #c4b5fd)' },
+    ],
+  },
+  {
+    id: '3', date: '2025-08-30', displayDate: '30 авг 2025', title: 'Начало отношений', emoji: '❤️',
+    media: [
+      { type: 'photo', caption: 'Официально вместе', emoji: '❤️', gradient: 'linear-gradient(135deg, #fecaca, #fca5a5)' },
+      { type: 'video', caption: 'Наше первое видео', emoji: '🎥', gradient: 'linear-gradient(135deg, #e0e7ff, #a5b4fc)' },
+    ],
+  },
+  {
+    id: '4', date: '2025-09-30', displayDate: '30 сен 2025', title: 'Первый месяц', emoji: '💕',
+    media: [
+      { type: 'photo', caption: 'Уже месяц вместе', emoji: '💕', gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)' },
+    ],
+  },
+  {
+    id: '5', date: '2025-10-06', displayDate: '6 окт 2025', title: 'Твой день рождения', emoji: '🎂',
+    media: [
+      { type: 'photo', caption: 'С днём рождения, любимая!', emoji: '🎂', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)' },
+      { type: 'video', caption: 'Тортик и свечки', emoji: '🕯️', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)' },
+    ],
+  },
+  {
+    id: '6', date: '2025-10-11', displayDate: '11 окт 2025', title: 'Первый концерт', emoji: '🎵',
+    media: [
+      { type: 'photo', caption: 'Наш первый концерт', emoji: '🎵', gradient: 'linear-gradient(135deg, #dbeafe, #60a5fa)' },
+    ],
+  },
+  {
+    id: '7', date: '2025-10-14', displayDate: '14 окт 2025', title: 'Маленькая мечта', emoji: '✨',
+    media: [
+      { type: 'photo', caption: 'Наша маленькая мечта', emoji: '✨', gradient: 'linear-gradient(135deg, #f3e8ff, #c084fc)' },
+    ],
+  },
+  {
+    id: '8', date: '2025-11-22', displayDate: '22 ноя 2025', title: 'Первая поездка', emoji: '✈️',
+    media: [
+      { type: 'photo', caption: 'Путешествие началось', emoji: '✈️', gradient: 'linear-gradient(135deg, #e0f2fe, #38bdf8)' },
+    ],
+  },
+  {
+    id: '9', date: '2025-12-30', displayDate: '30 дек 2025 - 1 янв 2026', title: 'Новый год', emoji: '🎆',
+    media: [
+      { type: 'photo', caption: 'Новый год вместе', emoji: '🎆', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)' },
+      { type: 'video', caption: 'Фейерверки', emoji: '🎇', gradient: 'linear-gradient(135deg, #ede9fe, #8b5cf6)' },
+    ],
+  },
+  {
+    id: '10', date: '2026-01-25', displayDate: '25 янв 2026', title: 'Новогодняя Москва', emoji: '🏙️',
+    media: [
+      { type: 'photo', caption: 'Гуляли по Москве', emoji: '🏙️', gradient: 'linear-gradient(135deg, #dbeafe, #3b82f6)' },
+    ],
+  },
+  {
+    id: '11', date: '2026-02-28', displayDate: '28 фев 2026', title: '6 месяцев', emoji: '💖',
+    media: [
+      { type: 'photo', caption: 'Полгода любви', emoji: '💖', gradient: 'linear-gradient(135deg, #fce7f3, #ec4899)' },
+    ],
+  },
+  {
+    id: '12', date: '2026-02-28', displayDate: '28 фев - 12 май 2026', title: 'Микс', emoji: '📸',
+    media: [
+      { type: 'photo', caption: 'Наши лучшие моменты', emoji: '📸', gradient: 'linear-gradient(135deg, #fef3c7, #f59e0b)' },
+      { type: 'video', caption: 'Короткое видео', emoji: '🎬', gradient: 'linear-gradient(135deg, #e0e7ff, #6366f1)' },
+    ],
+  },
+  {
+    id: '13', date: '2026-05-12', displayDate: '12 май 2026', title: 'Мой ДР', emoji: '🎉',
+    media: [
+      { type: 'photo', caption: 'Мой день рождения', emoji: '🎉', gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)' },
+    ],
+  },
+  {
+    id: '14', date: '2026-05-30', displayDate: '30 май 2026', title: '9 месяцев', emoji: '💗',
+    media: [
+      { type: 'photo', caption: '9 месяцев счастья', emoji: '💗', gradient: 'linear-gradient(135deg, #fecaca, #fb7185)' },
+    ],
+  },
+  {
+    id: '15', date: '2026-06-01', displayDate: '1 июн 2026', title: 'Наше совместное лето', emoji: '☀️',
+    media: [
+      { type: 'photo', caption: 'Лето — это мы', emoji: '☀️', gradient: 'linear-gradient(135deg, #fef9c3, #eab308)' },
+      { type: 'video', caption: 'Летние деньки', emoji: '🌻', gradient: 'linear-gradient(135deg, #dcfce7, #22c55e)' },
+    ],
+  },
 ];
 
 function TimelineItem({ event, index, onClick }: { event: TimelineEvent; index: number; onClick: (e: TimelineEvent) => void }) {
@@ -55,7 +144,8 @@ function TimelineItem({ event, index, onClick }: { event: TimelineEvent; index: 
 
 export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
-  const [currentPhotoIndex, setCurrentPhotoIndex] = useState(0);
+  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const [fullscreenMedia, setFullscreenMedia] = useState<MediaItem | null>(null);
   const [mounted, setMounted] = useState(false);
   
   const particles = ['💕', '💗', '💖', '✨', '🌸', '💫'];
@@ -97,19 +187,21 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
 
   const handleEventClick = (event: TimelineEvent) => {
     setSelectedEvent(event);
-    setCurrentPhotoIndex(0);
+    setCurrentMediaIndex(0);
   };
 
   const handleClose = () => {
     setSelectedEvent(null);
   };
 
-  const nextPhoto = () => {
-    setCurrentPhotoIndex((prev) => (prev + 1) % 4);
+  const nextMedia = () => {
+    if (!selectedEvent) return;
+    setCurrentMediaIndex((prev) => (prev + 1) % selectedEvent.media.length);
   };
 
-  const prevPhoto = () => {
-    setCurrentPhotoIndex((prev) => (prev - 1 + 4) % 4);
+  const prevMedia = () => {
+    if (!selectedEvent) return;
+    setCurrentMediaIndex((prev) => (prev - 1 + selectedEvent.media.length) % selectedEvent.media.length);
   };
 
   if (!mounted) {
@@ -173,6 +265,35 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
       )}
 
       <AnimatePresence>
+        {fullscreenMedia && selectedEvent && (
+          <motion.div
+            className="fullscreen-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setFullscreenMedia(null)}
+          >
+            <button className="fullscreen-close" onClick={() => setFullscreenMedia(null)}>✕</button>
+            <motion.div
+              className="fullscreen-content"
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="fullscreen-media" style={{ background: fullscreenMedia.gradient }}>
+                <span style={{ fontSize: '6rem' }}>{fullscreenMedia.emoji}</span>
+                {fullscreenMedia.type === 'video' && (
+                  <span className="fullscreen-play">▶</span>
+                )}
+              </div>
+              <p className="fullscreen-caption">{fullscreenMedia.caption}</p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
         {selectedEvent && (
           <motion.div
             className="event-modal"
@@ -188,30 +309,53 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
               exit={{ scale: 0.8, opacity: 0 }}
               onClick={(e) => e.stopPropagation()}
             >
-              <button onClick={handleClose} style={{ position: 'absolute', top: '-15px', right: '-15px', width: '40px', height: '40px', borderRadius: '50%', background: 'rgba(200,220,255,0.45)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.6)', boxShadow: '0 4px 20px rgba(100,150,200,0.15), inset 0 0 15px rgba(255,255,255,0.4)', color: '#6b8cae', fontSize: '1.2rem', cursor: 'pointer' }}>✕</button>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                <span style={{ fontSize: '2.5rem' }}>{selectedEvent.emoji}</span>
-                <h2 style={{ fontFamily: 'var(--font-caveat)', fontSize: '1.5rem', color: '#6b8cae', margin: '0' }}>{selectedEvent.title}</h2>
-                <span style={{ fontFamily: 'var(--font-caveat)', fontSize: '1rem', color: '#8aa8c2' }}>{selectedEvent.displayDate}</span>
+              <button className="event-close" onClick={handleClose}>✕</button>
+
+              <div className="event-header">
+                <span className="event-emoji">{selectedEvent.emoji}</span>
+                <h2>{selectedEvent.title}</h2>
+                <span className="event-date">{selectedEvent.displayDate}</span>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                  <button onClick={prevPhoto} style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(200,220,255,0.35)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.6)', boxShadow: '0 4px 20px rgba(100,150,200,0.15), inset 0 0 20px rgba(255,255,255,0.4)', fontSize: '1.8rem', cursor: 'pointer', color: '#6b8cae' }}>←</button>
-                  <div style={{ width: '280px', height: '280px', background: 'rgba(200,220,255,0.25)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', borderRadius: '20px', border: '1px solid rgba(255,255,255,0.3)', boxShadow: '0 8px 32px rgba(100,150,200,0.1), inset 0 0 64px rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4rem' }}>📷</div>
-                  <button onClick={nextPhoto} style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(200,220,255,0.35)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.6)', boxShadow: '0 4px 20px rgba(100,150,200,0.15), inset 0 0 20px rgba(255,255,255,0.4)', fontSize: '1.8rem', cursor: 'pointer', color: '#6b8cae' }}>→</button>
+              {selectedEvent.media.length > 0 && (
+                <div className="media-section">
+                  <div className="media-main">
+                    {selectedEvent.media.length > 1 && (
+                      <button className="media-nav media-prev" onClick={prevMedia}>‹</button>
+                    )}
+                    <div
+                      className="media-display"
+                      style={{ background: selectedEvent.media[currentMediaIndex].gradient }}
+                      onClick={() => setFullscreenMedia(selectedEvent.media[currentMediaIndex])}
+                    >
+                      <span className="media-emoji">{selectedEvent.media[currentMediaIndex].emoji}</span>
+                      {selectedEvent.media[currentMediaIndex].type === 'video' && (
+                        <span className="media-play-icon">▶</span>
+                      )}
+                      <span className="media-expand">⛶</span>
+                    </div>
+                    {selectedEvent.media.length > 1 && (
+                      <button className="media-nav media-next" onClick={nextMedia}>›</button>
+                    )}
+                  </div>
+
+                  <p className="media-caption">{selectedEvent.media[currentMediaIndex].caption}</p>
+
+                  {selectedEvent.media.length > 1 && (
+                    <div className="media-dots">
+                      {selectedEvent.media.map((_, i) => (
+                        <button
+                          key={i}
+                          className={`media-dot${i === currentMediaIndex ? ' active' : ''}`}
+                          onClick={() => setCurrentMediaIndex(i)}
+                        >
+                          {selectedEvent.media[i].type === 'video' ? '▶' : ''}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                <div style={{ display: 'flex', gap: '14px', background: 'rgba(200,220,255,0.25)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderRadius: '20px', padding: '12px 20px', boxShadow: '0 4px 20px rgba(100,150,200,0.1), inset 0 0 20px rgba(255,255,255,0.3)' }}>
-                  {[0, 1, 2, 3].map((i) => (
-                    <button
-                      key={i}
-                      onClick={() => setCurrentPhotoIndex(i)}
-                      style={{ width: '16px', height: '16px', borderRadius: '50%', background: currentPhotoIndex === i ? 'rgba(147,197,253,0.8)' : 'rgba(255,255,255,0.5)', border: '2px solid rgba(147,197,253,0.8)', cursor: 'pointer', boxShadow: currentPhotoIndex === i ? '0 0 12px rgba(147,197,253,0.6)' : 'none' }}
-                    />
-                  ))}
-                </div>
-              </div>
+              )}
             </motion.div>
           </motion.div>
         )}
@@ -551,16 +695,244 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
         }
 
         .event-card {
-          background: rgba(200,220,255,0.2);
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
+          background: rgba(255,255,255,0.85);
+          backdrop-filter: blur(24px);
+          -webkit-backdrop-filter: blur(24px);
           border-radius: 24px;
-          padding: 32px 24px;
-          max-width: 400px;
-          width: 100%;
+          padding: 28px 24px;
+          max-width: 440px;
+          width: 90vw;
           position: relative;
-          border: 1px solid rgba(255,255,255,0.35);
-          box-shadow: 0 8px 32px rgba(100,150,200,0.12), inset 0 0 64px rgba(255,255,255,0.15);
+          border: 1px solid rgba(255,255,255,0.5);
+          box-shadow: 0 12px 40px rgba(100,150,200,0.15);
+        }
+
+        .event-close {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: rgba(200,220,255,0.45);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255,255,255,0.6);
+          color: #6b8cae;
+          font-size: 1.1rem;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 10;
+        }
+
+        .event-header {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 8px;
+          margin-bottom: 20px;
+        }
+
+        .event-emoji {
+          font-size: 2.5rem;
+        }
+
+        .event-header h2 {
+          font-family: var(--font-caveat);
+          font-size: 1.5rem;
+          color: #6b8cae;
+          margin: 0;
+        }
+
+        .event-date {
+          font-family: var(--font-caveat);
+          font-size: 1rem;
+          color: #8aa8c2;
+        }
+
+        .media-section {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 14px;
+        }
+
+        .media-main {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          width: 100%;
+          justify-content: center;
+        }
+
+        .media-nav {
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          background: rgba(200,220,255,0.35);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255,255,255,0.6);
+          font-size: 1.6rem;
+          cursor: pointer;
+          color: #6b8cae;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .media-display {
+          width: 280px;
+          height: 280px;
+          border-radius: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 4rem;
+          cursor: pointer;
+          position: relative;
+          border: 1px solid rgba(255,255,255,0.4);
+          box-shadow: 0 4px 20px rgba(100,150,200,0.1);
+          overflow: hidden;
+        }
+
+        .media-emoji {
+          font-size: 4rem;
+          filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+        }
+
+        .media-play-icon {
+          position: absolute;
+          width: 56px;
+          height: 56px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.85);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.4rem;
+          color: #6b8cae;
+          box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .media-expand {
+          position: absolute;
+          bottom: 10px;
+          right: 10px;
+          font-size: 1.2rem;
+          opacity: 0.6;
+          background: rgba(255,255,255,0.7);
+          padding: 4px 8px;
+          border-radius: 8px;
+        }
+
+        .media-caption {
+          font-family: var(--font-caveat);
+          font-size: 1.15rem;
+          color: #6b8cae;
+          text-align: center;
+          margin: 0;
+          padding: 0 8px;
+          font-style: italic;
+        }
+
+        .media-dots {
+          display: flex;
+          gap: 10px;
+        }
+
+        .media-dot {
+          width: 12px;
+          height: 12px;
+          border-radius: 50%;
+          background: rgba(200,220,255,0.5);
+          border: 2px solid rgba(147,197,253,0.6);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.4rem;
+          color: #8aa8c2;
+        }
+
+        .media-dot.active {
+          background: rgba(147,197,253,0.8);
+          border-color: rgba(147,197,253,0.9);
+          box-shadow: 0 0 10px rgba(147,197,253,0.5);
+        }
+
+        .fullscreen-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0,0,0,0.9);
+          backdrop-filter: blur(15px);
+          -webkit-backdrop-filter: blur(15px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 2000;
+          padding: 20px;
+        }
+
+        .fullscreen-close {
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.2);
+          border: none;
+          color: white;
+          font-size: 1.4rem;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 10;
+        }
+
+        .fullscreen-content {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 24px;
+          max-width: 85vw;
+          max-height: 85vh;
+        }
+
+        .fullscreen-media {
+          width: clamp(280px, 70vw, 600px);
+          height: clamp(280px, 60vh, 500px);
+          border-radius: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+        }
+
+        .fullscreen-play {
+          position: absolute;
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.2);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 2.5rem;
+          color: white;
+          backdrop-filter: blur(5px);
+        }
+
+        .fullscreen-caption {
+          font-family: var(--font-caveat);
+          font-size: 1.4rem;
+          color: rgba(255,255,255,0.85);
+          text-align: center;
+          max-width: 500px;
+          margin: 0;
         }
 
         .timeline-header h1 {
@@ -620,13 +992,11 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
 
           .event-card {
             padding: 28px 20px;
-            max-width: 360px;
           }
 
-          .photo-placeholder {
-            width: 200px;
-            height: 200px;
-            font-size: 3.5rem;
+          .media-display {
+            width: 220px;
+            height: 220px;
           }
 
           .continue-btn {
@@ -636,10 +1006,6 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
 
           .timeline-date {
             font-size: 0.75rem;
-          }
-
-          .event-card {
-            max-width: 340px;
           }
         }
 
@@ -695,17 +1061,22 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
 
           .event-card {
             padding: 20px 14px;
-            max-width: 300px;
+            max-width: 320px;
           }
 
           .event-card h2 {
             font-size: 1.3rem;
           }
 
-          .photo-placeholder {
-            width: 140px;
-            height: 140px;
-            font-size: 2.5rem;
+          .media-display {
+            width: 180px;
+            height: 180px;
+          }
+
+          .media-nav {
+            width: 36px;
+            height: 36px;
+            font-size: 1.3rem;
           }
 
           .continue-btn {
@@ -720,6 +1091,15 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
 
           .falling-particle {
             font-size: 1rem;
+          }
+
+          .media-emoji {
+            font-size: 3rem;
+          }
+
+          .fullscreen-media {
+            width: clamp(220px, 85vw, 400px);
+            height: clamp(220px, 50vh, 350px);
           }
         }
 
@@ -744,13 +1124,16 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
 
           .event-card {
             padding: 16px 12px;
-            max-width: 260px;
+            max-width: 280px;
           }
 
-          .photo-placeholder {
-            width: 100px;
-            height: 100px;
-            font-size: 2rem;
+          .media-display {
+            width: 150px;
+            height: 150px;
+          }
+
+          .media-emoji {
+            font-size: 2.5rem;
           }
         }
       `}</style>
