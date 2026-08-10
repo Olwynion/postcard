@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface TimelineEvent {
@@ -39,6 +39,7 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
   const [particlesList, setParticlesList] = useState<{ id: number; emoji: string; left: number; delay: number; duration: number }[]>([]);
 
   const [showContinue, setShowContinue] = useState(false);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -53,19 +54,22 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
   }, []);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollHeight = document.documentElement.scrollHeight;
-      const clientHeight = document.documentElement.clientHeight;
-      const scrollTop = window.scrollY;
-      
-      if (scrollHeight - scrollTop <= clientHeight + 100) {
-        setShowContinue(true);
-      }
-    };
+    const el = sentinelRef.current;
+    if (!el) return;
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShowContinue(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [mounted]);
 
   const handleEventClick = (event: TimelineEvent) => {
     setSelectedEvent(event);
@@ -144,6 +148,7 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
             </div>
           </motion.div>
         ))}
+        <div ref={sentinelRef} style={{ height: '1px' }} />
       </div>
 
       {onNext && showContinue && (
