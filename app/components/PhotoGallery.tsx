@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface PhotoItem {
@@ -12,10 +12,7 @@ interface Season {
   id: string;
   name: string;
   emoji: string;
-  accentColor: string;
-  background: string;
   photos: PhotoItem[];
-  particleColor: string;
 }
 
 const seasons: Season[] = [
@@ -23,383 +20,363 @@ const seasons: Season[] = [
     id: 'summer',
     name: 'Лето',
     emoji: '☀️',
-    accentColor: '#86efac',
-    background: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 50%, #bbf7d0 100%)',
-    particleColor: '#86efac',
     photos: [
-      { url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=400&fit=crop', caption: 'Лесные тропы...' },
-      { url: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=400&h=400&fit=crop', caption: 'Свежий воздух...' },
-      { url: 'https://images.unsplash.com/photo-1476231682828-37e571bc172f?w=400&h=400&fit=crop', caption: 'Утренний туман...' },
-      { url: 'https://images.unsplash.com/photo-1476673160081-cf065607f449?w=400&h=400&fit=crop', caption: 'Закаты...' },
+      { url: 'https://images.unsplash.com/photo-1529333166437-7752a1e5eb76?w=400&h=400&fit=crop', caption: 'Наши моменты' },
+      { url: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=400&h=400&fit=crop', caption: 'Счастливые дни' },
+      { url: 'https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=400&h=400&fit=crop', caption: 'Вместе' },
+      { url: 'https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=400&h=400&fit=crop', caption: 'Любимые' },
     ],
   },
   {
     id: 'autumn',
     name: 'Осень',
     emoji: '🍂',
-    accentColor: '#fb923c',
-    background: 'linear-gradient(135deg, #fff7ed 0%, #ffedd5 50%, #fed7aa 100%)',
-    particleColor: '#fb923c',
     photos: [
-      { url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop', caption: 'Золотые листья...' },
-      { url: 'https://images.unsplash.com/photo-1476600149028-4ef929da6b2e?w=400&h=400&fit=crop', caption: 'Уютные дни...' },
-      { url: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&h=400&fit=crop', caption: 'Город в дыму...' },
-      { url: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=400&h=400&fit=crop', caption: 'Ожидание зимы...' },
+      { url: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=400&h=400&fit=crop', caption: 'Прогулки' },
+      { url: 'https://images.unsplash.com/photo-1473081556163-2a17de81fc97?w=400&h=400&fit=crop', caption: 'Объятия' },
+      { url: 'https://images.unsplash.com/photo-1516731566880-919c39d23910?w=400&h=400&fit=crop', caption: 'Улыбки' },
+      { url: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=400&h=400&fit=crop', caption: 'Тепло' },
     ],
   },
   {
     id: 'winter',
     name: 'Зима',
     emoji: '❄️',
-    accentColor: '#7dd3fc',
-    background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%)',
-    particleColor: '#7dd3fc',
     photos: [
-      { url: 'https://images.unsplash.com/photo-1491002052546-bf38f186af56?w=400&h=400&fit=crop', caption: 'Первый снег...' },
-      { url: 'https://images.unsplash.com/photo-1517299321609-52687d1bc55a?w=400&h=400&fit=crop', caption: 'Тёплые объятия...' },
-      { url: 'https://images.unsplash.com/photo-1483664852095-d6cc6870702d?w=400&h=400&fit=crop', caption: 'Ночной город...' },
-      { url: 'https://images.unsplash.com/photo-1517483000871-1dbf64a6e1c6?w=400&h=400&fit=crop', caption: 'Новогодняя сказка...' },
+      { url: 'https://images.unsplash.com/photo-1518569003061-24dcea3116a2?w=400&h=400&fit=crop', caption: 'Зимние вечера' },
+      { url: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=400&h=400&fit=crop', caption: 'Рядом с тобой' },
+      { url: 'https://images.unsplash.com/photo-1524261305457-5942e2be7d02?w=400&h=400&fit=crop', caption: 'Новый год' },
+      { url: 'https://images.unsplash.com/photo-1482517967863-00e15c9b44be?w=400&h=400&fit=crop', caption: 'Праздник' },
     ],
   },
   {
     id: 'spring',
     name: 'Весна',
     emoji: '🌸',
-    accentColor: '#f9a8d4',
-    background: 'linear-gradient(135deg, #fdf2f8 0%, #fce7f3 50%, #fbcfe8 100%)',
-    particleColor: '#f9a8d4',
     photos: [
-      { url: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400&h=400&fit=crop', caption: 'Первые цветы...' },
-      { url: 'https://images.unsplash.com/photo-1518882605630-8a6c87889c28?w=400&h=400&fit=crop', caption: 'Тёплый ветер...' },
-      { url: 'https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=400&h=400&fit=crop', caption: 'Прогулки вдвоём...' },
-      { url: 'https://images.unsplash.com/photo-1462275646964-a0e3571f4f74?w=400&h=400&fit=crop', caption: 'Сакура...' },
+      { url: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=400&fit=crop', caption: 'Весеннее тепло' },
+      { url: 'https://images.unsplash.com/photo-1529333166437-7752a1e5eb76?w=400&h=400&fit=crop', caption: 'Цветы' },
+      { url: 'https://images.unsplash.com/photo-1523482580672-f109ba8b9f90?w=400&h=400&fit=crop', caption: 'Прогулки' },
+      { url: 'https://images.unsplash.com/photo-1542621334-a254cf47733d?w=400&h=400&fit=crop', caption: 'Счастье' },
     ],
   },
 ];
 
-interface Particle {
-  x: number;
-  y: number;
-  size: number;
-  speedY: number;
-  speedX: number;
-  rotation: number;
-  rotationSpeed: number;
-  opacity: number;
-  type: 'snowflake' | 'leaf';
-}
-
-export default function PhotoGallery({ onSeasonChange, onNext }: { onSeasonChange?: (bg: string) => void; onNext?: () => void }) {
+export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
   const [currentSeason, setCurrentSeason] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState<PhotoItem | null>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particlesRef = useRef<Particle[]>([]);
-  const animationRef = useRef<number | undefined>(undefined);
-  const touchStartX = useRef(0);
-  const touchStartY = useRef(0);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const season = seasons[currentSeason];
 
-  useEffect(() => {
-    if (onSeasonChange) {
-      onSeasonChange(season.background);
-    }
-  }, [season.background, onSeasonChange]);
-
-  const drawSnowflake = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number, rotation: number, opacity: number, color: string) => {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.globalAlpha = opacity;
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 1.5;
-    ctx.lineCap = 'round';
-
-    for (let i = 0; i < 6; i++) {
-      const angle = (i * 60 * Math.PI) / 180;
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(Math.cos(angle) * size, Math.sin(angle) * size);
-      ctx.stroke();
-    }
-
-    ctx.restore();
-  };
-
-  const drawLeaf = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number, rotation: number, opacity: number, color: string) => {
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate((rotation * Math.PI) / 180);
-    ctx.globalAlpha = opacity;
-    ctx.fillStyle = color;
-    ctx.beginPath();
-    ctx.moveTo(0, -size);
-    ctx.bezierCurveTo(size * 0.8, -size * 0.5, size * 0.8, size * 0.5, 0, size);
-    ctx.bezierCurveTo(-size * 0.8, size * 0.5, -size * 0.8, -size * 0.5, 0, -size);
-    ctx.fill();
-    ctx.restore();
-  };
-
-  const initParticles = useCallback(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const particles: Particle[] = [];
-    const count = 20;
-
-    for (let i = 0; i < count; i++) {
-      const type = Math.random() > 0.5 ? 'snowflake' : 'leaf';
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 4 + 2,
-        speedY: Math.random() * 0.6 + 0.2,
-        speedX: (Math.random() - 0.5) * 0.3,
-        rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 1.2,
-        opacity: Math.random() * 0.2 + 0.08,
-        type,
-      });
-    }
-    particlesRef.current = particles;
-  }, []);
-
-  useEffect(() => {
-    initParticles();
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      initParticles();
-    };
-    resize();
-    window.addEventListener('resize', resize);
-
-    const animate = () => {
-      const w = canvas.width;
-      const h = canvas.height;
-
-      ctx.clearRect(0, 0, w, h);
-
-      particlesRef.current.forEach((p) => {
-        p.y += p.speedY;
-        p.x += p.speedX;
-        p.rotation += p.rotationSpeed;
-
-        if (p.y > h + 20) {
-          p.y = -20;
-          p.x = Math.random() * w;
-        }
-        if (p.x < -20) p.x = w + 20;
-        if (p.x > w + 20) p.x = -20;
-
-        if (p.type === 'snowflake') {
-          drawSnowflake(ctx, p.x, p.y, p.size, p.rotation, p.opacity, season.particleColor);
-        } else {
-          drawLeaf(ctx, p.x, p.y, p.size, p.rotation, p.opacity, season.particleColor);
-        }
-      });
-
-      animationRef.current = requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    return () => {
-      window.removeEventListener('resize', resize);
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [season.id, season.particleColor, initParticles]);
-
-  const changeSeason = (newIndex: number) => {
-    if (isTransitioning || newIndex === currentSeason) return;
-    setIsTransitioning(true);
-    initParticles();
-
-    setTimeout(() => {
-      setCurrentSeason(newIndex);
-      setIsTransitioning(false);
-    }, 400);
-  };
-
   const nextSeason = () => {
-    changeSeason((currentSeason + 1) % seasons.length);
+    setCurrentSeason((currentSeason + 1) % seasons.length);
   };
 
   const prevSeason = () => {
-    changeSeason((currentSeason - 1 + seasons.length) % seasons.length);
+    setCurrentSeason((currentSeason - 1 + seasons.length) % seasons.length);
   };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    const touchEndX = e.changedTouches[0].clientX;
-    const touchEndY = e.changedTouches[0].clientY;
-    const diffX = touchStartX.current - touchEndX;
-    const diffY = Math.abs(touchStartY.current - touchEndY);
-
-    if (diffY > 50 && diffY > Math.abs(diffX)) return;
-    if (Math.abs(diffX) > 50) {
-      diffX > 0 ? nextSeason() : prevSeason();
-    }
-  };
-
-  const decos = null;
+  if (!mounted) {
+    return null;
+  }
 
   return (
-    <div className="gallery">
-      <canvas ref={canvasRef} className="particle-canvas" />
+    <div className="gallery-page">
+      <div className="gallery-card">
+        <div className="header">
+          <span className="emoji">{season.emoji}</span>
+          <h1>{season.name}</h1>
+        </div>
 
-      <motion.div
-        className="season-indicator"
-        style={{ background: season.accentColor + '30' }}
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.5, ease: 'easeOut' }}
-        key={season.id}
-      >
-        <span className="season-emoji">{season.emoji}</span>
-        <span className="season-name">{season.name}</span>
-      </motion.div>
-
-      <motion.div
-        className="carousel-wrapper"
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-        animate={{ opacity: isTransitioning ? 0.3 : 1 }}
-        transition={{ duration: 0.3 }}
-      >
-        <motion.button
-          onClick={prevSeason}
-          className="carousel-btn"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          disabled={isTransitioning}
-        >
-          ←
-        </motion.button>
-
-        <div className="photos-container">
+        <div className="photos-wrapper">
+          <button className="nav-btn" onClick={prevSeason}>←</button>
+          
           <div className="photos-area">
             <AnimatePresence mode="wait">
-              <motion.div
+              <motion.div 
                 className="photos-grid"
                 key={season.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4 }}
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -30 }}
+                transition={{ duration: 0.3 }}
               >
-                {season.photos.map((photo, index) => (
-                  <motion.div
-                    key={photo.url + season.id}
-                    className="photo-item"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: index * 0.08, ease: 'easeOut' }}
-                    onClick={() => setSelectedPhoto(photo)}
-                    whileHover={{ scale: 1.02 }}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <div className="polaroid-frame">
-                      <div className="polaroid-photo">
-                        <img src={photo.url} alt={photo.caption} />
-                      </div>
-                      <div className="polaroid-bottom">
-                        <span className="polaroid-caption">{photo.caption}</span>
-                      </div>
+                {season.photos.map((photo) => (
+                  <div key={photo.url} className="photo-item" onClick={() => setSelectedPhoto(photo)}>
+                    <div className="polaroid">
+                      <div className="photo-placeholder"></div>
+                      <p>{photo.caption}</p>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </motion.div>
             </AnimatePresence>
           </div>
+          
+          <button className="nav-btn" onClick={nextSeason}>→</button>
         </div>
 
-        <motion.button
-          onClick={nextSeason}
-          className="carousel-btn"
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          disabled={isTransitioning}
-        >
-          →
-        </motion.button>
-      </motion.div>
+        <div className="dots">
+          {seasons.map((s, index) => (
+            <button
+              key={s.id}
+              className={`dot ${currentSeason === index ? 'active' : ''}`}
+              onClick={() => setCurrentSeason(index)}
+            >
+              {s.emoji}
+            </button>
+          ))}
+        </div>
 
-      <div className="season-dots">
-        {seasons.map((s, index) => (
-          <motion.button
-            key={s.id}
-            className={`season-dot ${currentSeason === index ? 'active' : ''}`}
-            onClick={() => changeSeason(index)}
-            style={{ '--accent': s.accentColor } as React.CSSProperties}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <span className="dot-emoji">{s.emoji}</span>
-          </motion.button>
-        ))}
+        {onNext && currentSeason === seasons.length - 1 && (
+          <button className="continue-btn" onClick={onNext}>
+            Продолжить 💕
+          </button>
+        )}
       </div>
 
-      {onNext && currentSeason === seasons.length - 1 && (
-        <motion.button
-          className="gallery-continue-btn"
-          onClick={onNext}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          Продолжить 💕
-        </motion.button>
+      {selectedPhoto && (
+        <div className="viewer" onClick={() => setSelectedPhoto(null)}>
+          <div className="viewer-content" onClick={(e) => e.stopPropagation()}>
+            <button className="close-btn" onClick={() => setSelectedPhoto(null)}>✕</button>
+            <div className="viewer-photo"></div>
+            <p className="viewer-caption">{selectedPhoto.caption}</p>
+          </div>
+        </div>
       )}
 
-      <AnimatePresence>
-        {selectedPhoto && (
-          <motion.div
-            className="photo-viewer"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setSelectedPhoto(null)}
-          >
-            <motion.div
-              className="photo-viewer-content"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                className="photo-viewer-close"
-                onClick={() => setSelectedPhoto(null)}
-              >
-                ✕
-              </button>
-              <img
-                src={selectedPhoto.url.replace('w=400&h=400', 'w=1200&h=1200')}
-                alt={selectedPhoto.caption}
-              />
-              <div className="photo-viewer-caption">
-                <span>{selectedPhoto.caption}</span>
-                <span>{season.emoji} {season.name}</span>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <style>{`
+        .gallery-page {
+          position: fixed;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 20px;
+          z-index: 100;
+          background: linear-gradient(135deg, #fff5f7 0%, #ffeef2 50%, #fdf2f8 100%);
+        }
+
+        .gallery-card {
+          background: #fff;
+          border-radius: 12px;
+          padding: 28px 20px;
+          max-width: 480px;
+          width: 100%;
+          box-shadow: 0 15px 50px rgba(236, 72, 153, 0.1);
+        }
+
+        .header {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 10px;
+          margin-bottom: 20px;
+        }
+
+        .emoji {
+          font-size: 1.8rem;
+        }
+
+        h1 {
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: 1.8rem;
+          color: #be185d;
+          margin: 0;
+        }
+
+        .photos-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin-bottom: 20px;
+        }
+
+        .photos-area {
+          flex: 1;
+        }
+
+        .photos-grid {
+          display: grid;
+          grid-template-columns: repeat(2, 1fr);
+          gap: 12px;
+          max-width: 100%;
+        }
+
+        .photo-item {
+          cursor: pointer;
+          display: flex;
+          justify-content: center;
+        }
+
+        .polaroid {
+          background: #fff;
+          padding: 6px 6px 32px 6px;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+          max-width: 130px;
+        }
+
+        .photo-item:nth-child(1) .polaroid { transform: rotate(-2deg); }
+        .photo-item:nth-child(2) .polaroid { transform: rotate(1.5deg); }
+        .photo-item:nth-child(3) .polaroid { transform: rotate(-1deg); }
+        .photo-item:nth-child(4) .polaroid { transform: rotate(2deg); }
+
+        .photo-item:hover .polaroid {
+          transform: rotate(0deg) scale(1.03);
+          box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        }
+
+        .photo-placeholder {
+          width: 100%;
+          aspect-ratio: 1;
+          background: linear-gradient(135deg, #fce7f3, #fbcfe8);
+        }
+
+        .polaroid p {
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: 0.9rem;
+          color: #444;
+          text-align: center;
+          margin: 0;
+          padding-top: 10px;
+          font-style: italic;
+        }
+
+        .nav-btn {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: #fce7f3;
+          border: none;
+          font-size: 1.1rem;
+          color: #be185d;
+          cursor: pointer;
+          flex-shrink: 0;
+        }
+
+        .nav-btn:hover {
+          background: #fbcfe8;
+        }
+
+        .dots {
+          display: flex;
+          justify-content: center;
+          gap: 8px;
+        }
+
+        .dot {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: #fff;
+          border: 2px solid #fce7f3;
+          font-size: 1.2rem;
+          cursor: pointer;
+        }
+
+        .dot.active {
+          border-color: #f9a8d4;
+          box-shadow: 0 0 15px rgba(249, 168, 212, 0.5);
+        }
+
+        .continue-btn {
+          display: block;
+          margin: 20px auto 0;
+          background: #fce7f3;
+          border: none;
+          padding: 12px 28px;
+          border-radius: 25px;
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: 1.2rem;
+          color: #be185d;
+          cursor: pointer;
+        }
+
+        .viewer {
+          position: fixed;
+          inset: 0;
+          background: rgba(0,0,0,0.9);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          padding: 20px;
+        }
+
+        .viewer-content {
+          position: relative;
+          max-width: 90vw;
+          max-height: 90vh;
+        }
+
+        .viewer-content img,
+        .viewer-photo {
+          max-width: 100%;
+          max-height: 85vh;
+          border-radius: 8px;
+        }
+
+        .viewer-photo {
+          width: 70vh;
+          max-width: 90vw;
+          aspect-ratio: 1;
+          background: linear-gradient(135deg, #fce7f3, #fbcfe8);
+        }
+
+        .close-btn {
+          position: absolute;
+          top: -45px;
+          right: 0;
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.2);
+          border: none;
+          color: white;
+          font-size: 1.1rem;
+          cursor: pointer;
+        }
+
+        .viewer-caption {
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: 1.1rem;
+          color: white;
+          text-align: center;
+          margin-top: 15px;
+        }
+
+        @media (max-width: 480px) {
+          .gallery-card {
+            padding: 16px 10px;
+          }
+
+          .photos-grid {
+            gap: 8px;
+          }
+
+          .polaroid {
+            max-width: 110px;
+            padding: 4px 4px 24px 4px;
+          }
+
+          .photo-placeholder {
+            min-height: auto;
+          }
+
+          .polaroid p {
+            font-size: 0.75rem;
+            padding-top: 6px;
+          }
+        }
+      `}</style>
     </div>
   );
 }

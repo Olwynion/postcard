@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import ParticlesCanvas from './ParticlesCanvas';
 
 const emojiSet = ['❤️', '💕', '💖', '💗', '🌹', '💋', '💌', '✨'];
@@ -31,18 +32,20 @@ export default function LoveMessage() {
 
   return (
     <>
-      <ParticlesCanvas emojiSet={emojiSet} color="#f472b6" count={20} />
+      <ParticlesCanvas emojiSet={emojiSet} color="#f472b6" count={35} />
 
       <div className={`love-container ${visible ? 'visible' : ''}`}>
         <div className="love-card">
-          <div className="crown">
-            <span>👑</span>
+          <div className="hearts-row">
+            <span>💕</span>
+            <span>💖</span>
+            <span>💕</span>
           </div>
 
           <h1 className="love-title">Для тебя, моя любимая</h1>
 
           <div className="heart-center">
-            <span className="big-heart">💖</span>
+            <span className="big-heart">❤️</span>
           </div>
 
           <div className="message-box">
@@ -54,7 +57,7 @@ export default function LoveMessage() {
 
           {showHeart && (
             <motion.div 
-              className="final-heart"
+              className="final-hearts"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', damping: 12, stiffness: 200 }}
@@ -66,8 +69,14 @@ export default function LoveMessage() {
           )}
 
           <div className="signature">
-            <p>С любовью, навсегда ❤️</p>
-            <p className="year">Наш 2024-2025</p>
+            <p>С любовью, навсегда</p>
+            <p className="year">❤️ Наш 2024-2025 ❤️</p>
+          </div>
+
+          <div className="sparkles">
+            <span>✨</span>
+            <span>💖</span>
+            <span>✨</span>
           </div>
         </div>
       </div>
@@ -84,7 +93,7 @@ export default function LoveMessage() {
           transform: scale(0.95);
           transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
           z-index: 100;
-          background: linear-gradient(135deg, #fff5f5 0%, #ffe4e6 50%, #fecdd3 100%);
+          background: linear-gradient(135deg, #fff5f7 0%, #ffeef2 50%, #fdf2f8 100%);
         }
 
         .love-container.visible {
@@ -94,43 +103,37 @@ export default function LoveMessage() {
 
         .love-card {
           background: linear-gradient(145deg, #fff, #fef2f2);
-          border-radius: 16px;
-          padding: 48px 32px;
+          border-radius: 12px;
+          padding: 40px 32px;
           max-width: 440px;
           width: 100%;
-          box-shadow: 0 25px 80px rgba(236, 72, 153, 0.2);
+          box-shadow: 0 20px 60px rgba(236, 72, 153, 0.15);
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 28px;
+          gap: 24px;
           position: relative;
-          overflow: hidden;
         }
 
-        .love-card::before {
-          content: '';
-          position: absolute;
-          top: 0;
-          left: 0;
-          right: 0;
-          height: 5px;
-          background: linear-gradient(90deg, #f472b6, #ec4899, #db7093, #f472b6);
+        .hearts-row {
+          display: flex;
+          gap: 8px;
+          font-size: 1.6rem;
         }
 
-        .crown {
-          font-size: 3rem;
-          animation: crownBounce 2s ease-in-out infinite;
-        }
+        .hearts-row span:nth-child(1) { animation: pulse 2s ease-in-out infinite; }
+        .hearts-row span:nth-child(2) { animation: pulse 2s ease-in-out 0.3s infinite; }
+        .hearts-row span:nth-child(3) { animation: pulse 2s ease-in-out 0.6s infinite; }
 
-        @keyframes crownBounce {
-          0%, 100% { transform: translateY(0) rotate(-3deg); }
-          50% { transform: translateY(-8px) rotate(3deg); }
+        @keyframes pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.15); }
         }
 
         .love-title {
           font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
-          font-size: 1.8rem;
-          font-weight: 600;
+          font-size: 2rem;
+          font-weight: 700;
           color: #be185d;
           text-align: center;
         }
@@ -181,15 +184,15 @@ export default function LoveMessage() {
           50% { opacity: 0; }
         }
 
-        .final-heart {
+        .final-hearts {
           display: flex;
           gap: 12px;
           font-size: 2rem;
         }
 
-        .final-heart span:nth-child(1) { animation: heartPulse 1.5s ease-in-out infinite; }
-        .final-heart span:nth-child(2) { animation: heartPulse 1.5s ease-in-out 0.25s infinite; }
-        .final-heart span:nth-child(3) { animation: heartPulse 1.5s ease-in-out 0.5s infinite; }
+        .final-hearts span:nth-child(1) { animation: heartPulse 1.5s ease-in-out infinite; }
+        .final-hearts span:nth-child(2) { animation: heartPulse 1.5s ease-in-out 0.25s infinite; }
+        .final-hearts span:nth-child(3) { animation: heartPulse 1.5s ease-in-out 0.5s infinite; }
 
         @keyframes heartPulse {
           0%, 100% { transform: scale(1); }
@@ -200,7 +203,7 @@ export default function LoveMessage() {
           text-align: center;
           display: flex;
           flex-direction: column;
-          gap: 8px;
+          gap: 4px;
         }
 
         .signature p {
@@ -215,18 +218,29 @@ export default function LoveMessage() {
           opacity: 0.8;
         }
 
+        .sparkles {
+          display: flex;
+          gap: 12px;
+          font-size: 1.4rem;
+        }
+
+        .sparkles span:nth-child(1) { animation: sparkle 2s ease-in-out infinite; }
+        .sparkles span:nth-child(2) { animation: sparkle 2s ease-in-out 0.4s infinite; }
+        .sparkles span:nth-child(3) { animation: sparkle 2s ease-in-out 0.8s infinite; }
+
+        @keyframes sparkle {
+          0%, 100% { opacity: 0.4; transform: scale(0.8); }
+          50% { opacity: 1; transform: scale(1.2); }
+        }
+
         @media (max-width: 480px) {
           .love-card {
-            padding: 36px 20px;
+            padding: 30px 20px;
             gap: 20px;
           }
 
-          .crown {
-            font-size: 2.4rem;
-          }
-
           .love-title {
-            font-size: 1.5rem;
+            font-size: 1.6rem;
           }
 
           .big-heart {
@@ -249,5 +263,3 @@ export default function LoveMessage() {
     </>
   );
 }
-
-import { motion } from 'framer-motion';

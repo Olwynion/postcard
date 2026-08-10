@@ -1,143 +1,23 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import ParticlesCanvas from './ParticlesCanvas';
 
-interface Particle {
-  x: number;
-  y: number;
-  size: number;
-  speedX: number;
-  speedY: number;
-  opacity: number;
-  hue: number;
-  type: 'sparkle' | 'confetti';
-  rotation: number;
-  rotationSpeed: number;
-}
+const emojiSet = ['💕', '✨', '💖', '🌸', '❤️', '💗'];
 
 export default function Card({ onOpen }: { onOpen: () => void }) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isClosing, setIsClosing] = useState(false);
-  const [showTap, setShowTap] = useState(true);
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    resize();
-    window.addEventListener('resize', resize);
-
-    const particles: Particle[] = [];
-    const particleCount = 60;
-
-    for (let i = 0; i < particleCount; i++) {
-      particles.push(createParticle(canvas.width, canvas.height));
-    }
-
-    function createParticle(w: number, h: number): Particle {
-      const isSparkle = Math.random() > 0.4;
-      return {
-        x: Math.random() * w,
-        y: Math.random() * h,
-        size: isSparkle ? Math.random() * 3 + 1 : Math.random() * 6 + 3,
-        speedX: isSparkle ? (Math.random() - 0.5) * 0.4 : (Math.random() - 0.5) * 1.2,
-        speedY: isSparkle ? (Math.random() - 0.5) * 0.4 : Math.random() * 0.6 + 0.2,
-        opacity: Math.random() * 0.6 + 0.4,
-        hue: Math.random() * 40 + 330,
-        type: isSparkle ? 'sparkle' : 'confetti',
-        rotation: Math.random() * Math.PI * 2,
-        rotationSpeed: (Math.random() - 0.5) * 0.06,
-      };
-    }
-
-    let animationId: number;
-    let gradientHue = 340;
-
-    const animate = () => {
-      const w = canvas.width;
-      const h = canvas.height;
-
-      const bgGradient = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, Math.max(w, h) * 0.7);
-      bgGradient.addColorStop(0, `hsl(${gradientHue}, 30%, 20%)`);
-      bgGradient.addColorStop(1, `hsl(${gradientHue + 20}, 35%, 10%)`);
-      ctx.fillStyle = bgGradient;
-      ctx.fillRect(0, 0, w, h);
-
-      gradientHue = (gradientHue + 0.03) % 360;
-
-      particles.forEach((p) => {
-        p.x += p.speedX;
-        p.y += p.speedY;
-        p.rotation += p.rotationSpeed;
-        p.opacity = Math.max(0, p.opacity - 0.0008);
-
-        if (p.y > h + 20) {
-          p.y = -20;
-          p.x = Math.random() * w;
-          p.opacity = Math.random() * 0.6 + 0.4;
-        }
-        if (p.x < -20) p.x = w + 20;
-        if (p.x > w + 20) p.x = -20;
-
-        ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rotation);
-        ctx.globalAlpha = p.opacity;
-
-        if (p.type === 'sparkle') {
-          const sparkleGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, p.size * 2);
-          sparkleGradient.addColorStop(0, `hsla(${p.hue}, 100%, 95%, 1)`);
-          sparkleGradient.addColorStop(0.5, `hsla(${p.hue}, 100%, 75%, 0.6)`);
-          sparkleGradient.addColorStop(1, `hsla(${p.hue}, 100%, 60%, 0)`);
-          ctx.fillStyle = sparkleGradient;
-          ctx.beginPath();
-          ctx.arc(0, 0, p.size * 2, 0, Math.PI * 2);
-          ctx.fill();
-
-          ctx.strokeStyle = `hsla(${p.hue}, 100%, 85%, 0.9)`;
-          ctx.lineWidth = 0.5;
-          for (let i = 0; i < 4; i++) {
-            ctx.beginPath();
-            ctx.moveTo(0, 0);
-            ctx.lineTo(Math.cos((i * Math.PI) / 2) * p.size * 2.5, Math.sin((i * Math.PI) / 2) * p.size * 2.5);
-            ctx.stroke();
-          }
-        } else {
-          ctx.fillStyle = `hsla(${p.hue}, 80%, 70%, 0.8)`;
-          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
-        }
-
-        ctx.restore();
-      });
-
-      animationId = requestAnimationFrame(animate);
-    };
-
-    animate();
-
-    return () => {
-      window.removeEventListener('resize', resize);
-      cancelAnimationFrame(animationId);
-    };
-  }, []);
 
   const handleClick = () => {
     if (isClosing) return;
-    setShowTap(false);
     setIsClosing(true);
     setTimeout(onOpen, 700);
   };
 
   return (
     <div className={`card-container ${isClosing ? 'closing' : ''}`} onClick={handleClick}>
-      <canvas ref={canvasRef} className="card-canvas" />
+      <ParticlesCanvas emojiSet={emojiSet} color="#f9a8d4" count={50} />
 
       <div className="card-content">
         <div className="hearts-row">
@@ -167,17 +47,13 @@ export default function Card({ onOpen }: { onOpen: () => void }) {
           justify-content: center;
           cursor: pointer;
           z-index: 200;
+          background: linear-gradient(135deg, #fff5f7 0%, #ffeef2 50%, #fdf2f8 100%);
           transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .card-container.closing {
           opacity: 0;
           transform: scale(1.15);
-        }
-
-        .card-canvas {
-          position: absolute;
-          inset: 0;
         }
 
         .card-content {
@@ -245,15 +121,15 @@ export default function Card({ onOpen }: { onOpen: () => void }) {
           font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
           font-size: clamp(2.2rem, 7vw, 4rem);
           font-weight: 700;
-          color: #fff;
+          color: #be185d;
           margin-bottom: 16px;
-          text-shadow: 0 4px 30px rgba(0,0,0,0.4);
+          text-shadow: 0 4px 30px rgba(236, 72, 153, 0.2);
         }
 
         .card-subtitle {
           font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
           font-size: clamp(1.4rem, 4vw, 1.8rem);
-          color: rgba(255, 255, 255, 0.9);
+          color: #9f1239;
           letter-spacing: 0.08em;
           animation: pulse 2s ease-in-out infinite;
         }

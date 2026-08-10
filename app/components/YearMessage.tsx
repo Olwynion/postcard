@@ -1,22 +1,46 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import ParticlesCanvas from './ParticlesCanvas';
 
 const emojiSet = ['✨', '🌟', '💫', '⭐', '🌙', '💕'];
 
+const fullText = `Год назад ты вошла в мою жизнь и сделала её ярче.
+
+Каждый день с тобой — это маленькое приключение.
+
+Ты смеёшься, и мир становится теплее.
+
+Ты рядом, и всё остальное неважно.
+
+Этот год — только начало нашей истории.`;
+
 export default function YearMessage({ onNext }: { onNext: () => void }) {
   const [visible, setVisible] = useState(false);
+  const [printedText, setPrintedText] = useState('');
   const [showContinue, setShowContinue] = useState(false);
 
   useEffect(() => {
     setTimeout(() => setVisible(true), 100);
-    setTimeout(() => setShowContinue(true), 3500);
+
+    let charIndex = 0;
+    const interval = setInterval(() => {
+      if (charIndex < fullText.length) {
+        setPrintedText(fullText.slice(0, charIndex + 1));
+        charIndex++;
+      } else {
+        clearInterval(interval);
+        setTimeout(() => setShowContinue(true), 600);
+      }
+    }, 45);
+
+    return () => clearInterval(interval);
   }, []);
 
   return (
     <>
-      <ParticlesCanvas emojiSet={emojiSet} color="#f9a8d4" count={15} />
+      <ParticlesCanvas emojiSet={emojiSet} color="#f9a8d4" count={30} />
 
       <div className={`message-container ${visible ? 'visible' : ''}`}>
         <div className="message-card">
@@ -30,20 +54,9 @@ export default function YearMessage({ onNext }: { onNext: () => void }) {
             <h1 className="message-title">Наш год вместе</h1>
             
             <div className="message-text">
-              <p className="line line-1">
-                Год назад ты вошла в мою жизнь и сделала её ярче.
-              </p>
-              <p className="line line-2">
-                Каждый день с тобой — это маленькое приключение.
-              </p>
-              <p className="line line-3">
-                Ты смеёшься, и мир становится теплее.
-              </p>
-              <p className="line line-4">
-                Ты рядом, и всё остальное неважно.
-              </p>
-              <p className="line line-5">
-                Этот год — только начало нашей истории.
+              <p className="typed-text">
+                {printedText}
+                <span className="cursor">|</span>
               </p>
             </div>
 
@@ -56,15 +69,12 @@ export default function YearMessage({ onNext }: { onNext: () => void }) {
 
           <AnimatePresence>
             {showContinue && (
-              <motion.button
+              <button
                 className="continue-btn"
                 onClick={onNext}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
               >
-                Пролистнуть 💕
-              </motion.button>
+                Продолжить 💕
+              </button>
             )}
           </AnimatePresence>
         </div>
@@ -133,29 +143,25 @@ export default function YearMessage({ onNext }: { onNext: () => void }) {
         }
 
         .message-text {
-          display: flex;
-          flex-direction: column;
-          gap: 14px;
+          width: 100%;
         }
 
-        .line {
+        .typed-text {
           font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
           font-size: 1.3rem;
           color: #4a4a4a;
-          line-height: 1.4;
-          opacity: 0;
-          animation: fadeInLine 0.8s ease-out forwards;
+          line-height: 1.6;
+          white-space: pre-wrap;
         }
 
-        .line-1 { animation-delay: 0.5s; }
-        .line-2 { animation-delay: 1.2s; }
-        .line-3 { animation-delay: 1.9s; }
-        .line-4 { animation-delay: 2.6s; }
-        .line-5 { animation-delay: 3.3s; color: #be185d; font-weight: 600; }
+        .cursor {
+          animation: blink 0.8s ease-in-out infinite;
+          color: #ec4899;
+        }
 
-        @keyframes fadeInLine {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
         }
 
         .sparkles {
@@ -184,6 +190,12 @@ export default function YearMessage({ onNext }: { onNext: () => void }) {
           cursor: pointer;
           box-shadow: 0 6px 25px rgba(236, 72, 153, 0.2);
           transition: all 0.3s ease;
+          animation: fadeInBtn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeInBtn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
 
         .continue-btn:hover {
@@ -200,7 +212,7 @@ export default function YearMessage({ onNext }: { onNext: () => void }) {
             font-size: 1.8rem;
           }
 
-          .line {
+          .typed-text {
             font-size: 1.1rem;
           }
 
@@ -212,5 +224,3 @@ export default function YearMessage({ onNext }: { onNext: () => void }) {
     </>
   );
 }
-
-import { motion, AnimatePresence } from 'framer-motion';
