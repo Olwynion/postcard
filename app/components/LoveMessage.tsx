@@ -326,30 +326,101 @@ export default function LoveMessage({ onBack }: { onBack?: () => void }) {
           transform: translateY(-2px);
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
           .love-card {
-            padding: 30px 20px;
+            padding: 32px 24px;
             gap: 20px;
           }
 
           .love-title {
-            font-size: 1.6rem;
+            font-size: 1.8rem;
           }
 
           .big-heart {
-            font-size: 4rem;
-          }
-
-          .message-box {
-            padding: 18px;
+            font-size: 4.5rem;
           }
 
           .love-text {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .love-container {
+            padding: 12px;
+          }
+
+          .love-card {
+            padding: 24px 16px;
+            gap: 16px;
+          }
+
+          .love-title {
+            font-size: 1.5rem;
+          }
+
+          .big-heart {
+            font-size: 3.5rem;
+          }
+
+          .message-box {
+            padding: 16px;
+          }
+
+          .love-text {
+            font-size: 1.15rem;
+          }
+
+          .hearts-row {
+            font-size: 1.3rem;
+            gap: 6px;
           }
 
           .signature p {
             font-size: 1.1rem;
+          }
+
+          .year {
+            font-size: 0.9rem !important;
+          }
+
+          .timer-value {
+            font-size: 1rem;
+            white-space: normal;
+          }
+
+          .sparkles {
+            font-size: 1.2rem;
+            gap: 8px;
+          }
+
+          .final-hearts {
+            font-size: 1.6rem;
+            gap: 8px;
+          }
+
+          .back-btn {
+            padding: 8px 22px;
+            font-size: 1rem;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .love-card {
+            padding: 18px 12px;
+            gap: 12px;
+          }
+
+          .love-title {
+            font-size: 1.3rem;
+          }
+
+          .big-heart {
+            font-size: 3rem;
+          }
+
+          .love-text {
+            font-size: 1rem;
           }
         }
       `}</style>

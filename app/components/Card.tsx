@@ -52,18 +52,31 @@ export default function Card({ onOpen }: { onOpen: () => void }) {
         )}
 
         {phase === 'reveal' && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: [0, 1, 1, 0] }}
-            transition={{ duration: 2.5, times: [0, 0.2, 0.6, 1], ease: 'easeInOut' }}
+          <div
+            className="reveal-heart"
           >
-            <div className="for-you">
-              <span className="for-you-emoji">💕</span>
-              <p className="for-you-text">Для тебя</p>
-              <span className="for-you-emoji">💕</span>
-            </div>
-          </motion.div>
+            ❤️
+          </div>
         )}
+
+        <style>{`
+          .reveal-heart {
+            font-size: clamp(100px, 40vw, 160px);
+            filter: drop-shadow(0 0 40px rgba(255, 50, 50, 0.6));
+            animation: revealGlow 1.5s ease-in-out infinite;
+          }
+
+          @keyframes revealGlow {
+            0%, 100% { 
+              filter: drop-shadow(0 0 30px rgba(255, 50, 50, 0.4));
+              transform: scale(1);
+            }
+            50% { 
+              filter: drop-shadow(0 0 100px rgba(255, 50, 50, 1));
+              transform: scale(1.15);
+            }
+          }
+        `}</style>
       </div>
 
       <style jsx>{`
@@ -97,28 +110,6 @@ export default function Card({ onOpen }: { onOpen: () => void }) {
           flex-direction: column;
           align-items: center;
           gap: 40px;
-        }
-
-        .for-you {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          gap: 20px;
-          padding: 20px 40px;
-        }
-
-        .for-you-text {
-          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
-          font-weight: 700;
-          font-size: clamp(3rem, 10vw, 5rem);
-          color: #be185d;
-          margin: 0;
-          text-shadow: 0 4px 30px rgba(236, 72, 153, 0.3);
-          letter-spacing: 0.02em;
-        }
-
-        .for-you-emoji {
-          font-size: clamp(1.5rem, 5vw, 2.5rem);
         }
 
         .hearts-row {
@@ -212,13 +203,35 @@ export default function Card({ onOpen }: { onOpen: () => void }) {
           50% { opacity: 1; transform: scale(1.2); }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
           .card-book {
-            padding: 32px 24px;
+            padding: 36px 28px;
+            border-radius: 16px;
           }
 
-          .for-you {
-            padding: 16px 24px;
+          .card-content {
+            gap: 28px;
+          }
+
+          .card-title {
+            margin-bottom: 12px;
+          }
+
+          .sparkles {
+            gap: 12px;
+            font-size: 1.3rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .card-book {
+            padding: 28px 20px;
+            border-radius: 14px;
+            margin: 0 16px;
+          }
+
+          .card-content {
+            gap: 24px;
           }
 
           .hearts-row {
@@ -233,13 +246,36 @@ export default function Card({ onOpen }: { onOpen: () => void }) {
             font-size: clamp(70px, 28vw, 120px);
           }
 
+          .card-title {
+            font-size: clamp(1.8rem, 7vw, 2.2rem);
+            margin-bottom: 10px;
+          }
+
+          .card-subtitle {
+            font-size: clamp(1.2rem, 4vw, 1.4rem);
+          }
+
           .sparkles {
-            gap: 12px;
-            font-size: 1.2rem;
+            gap: 10px;
+            font-size: 1.1rem;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .card-book {
+            padding: 20px 16px;
+          }
+
+          .card-content {
+            gap: 18px;
+          }
+
+          .main-heart {
+            font-size: 60px;
           }
 
           .card-title {
-            margin-bottom: 12px;
+            font-size: 1.4rem;
           }
         }
       `}</style>

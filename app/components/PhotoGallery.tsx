@@ -579,40 +579,178 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           background-clip: text;
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
+          .timeline-header {
+            margin-bottom: 18px;
+            padding-top: 16px;
+          }
+
           .timeline-header h1 {
-            font-size: 1.6rem;
+            font-size: 2rem;
+          }
+
+          .timeline-header .emoji {
+            font-size: 1.5rem;
+          }
+
+          .timeline {
+            max-width: 100%;
+            padding-left: 16px;
+            padding-right: 16px;
+          }
+
+          .timeline-line {
+            display: none;
+          }
+
+          .timeline-hearts {
+            display: none;
+          }
+
+          .timeline-item {
+            gap: 12px;
+            padding: 10px 0;
+          }
+
+          .timeline-dot {
+            width: 40px;
+            height: 40px;
+            font-size: 1.1rem;
+          }
+
+          .event-card {
+            padding: 28px 20px;
+            max-width: 360px;
+          }
+
+          .photo-placeholder {
+            width: 200px;
+            height: 200px;
+            font-size: 3.5rem;
+          }
+
+          .continue-btn {
+            padding: 12px 28px;
+            font-size: 1.1rem;
+          }
+
+          .timeline-date {
+            font-size: 0.75rem;
+          }
+
+          .event-card {
+            max-width: 340px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .timeline-page {
+            padding: 12px;
+          }
+
+          .timeline-header {
+            margin-bottom: 14px;
+            padding-top: 12px;
+            gap: 6px;
+          }
+
+          .timeline-header h1 {
+            font-size: 1.5rem;
+          }
+
+          .timeline-header .emoji {
+            font-size: 1.3rem;
           }
 
           .timeline {
             padding-bottom: 80px;
+            padding-left: 8px;
+            padding-right: 8px;
+          }
+
+          .timeline-item {
+            gap: 10px;
+            padding: 8px 0;
           }
 
           .timeline-dot {
-            width: 38px;
-            height: 38px;
-            font-size: 1rem;
+            width: 34px;
+            height: 34px;
+            font-size: 0.95rem;
+            border-width: 2px;
+          }
+
+          .timeline-content {
+            padding-top: 4px;
+            gap: 1px;
           }
 
           .timeline-title {
-            font-size: 1rem;
+            font-size: 0.95rem;
+          }
+
+          .timeline-date {
+            font-size: 0.7rem;
           }
 
           .event-card {
-            padding: 24px 16px;
-            max-width: 320px;
+            padding: 20px 14px;
+            max-width: 300px;
+          }
+
+          .event-card h2 {
+            font-size: 1.3rem;
           }
 
           .photo-placeholder {
-            width: 180px;
-            height: 180px;
-            font-size: 3rem;
+            width: 140px;
+            height: 140px;
+            font-size: 2.5rem;
           }
 
-          .photo-nav-btn {
-            width: 44px;
-            height: 44px;
-            font-size: 1.4rem;
+          .continue-btn {
+            padding: 10px 24px;
+            font-size: 1rem;
+            bottom: 20px;
+          }
+
+          .event-modal {
+            padding: 12px;
+          }
+
+          .falling-particle {
+            font-size: 1rem;
+          }
+        }
+
+        @media (max-width: 360px) {
+          .timeline-page {
+            padding: 8px;
+          }
+
+          .timeline-header h1 {
+            font-size: 1.3rem;
+          }
+
+          .timeline-dot {
+            width: 28px;
+            height: 28px;
+            font-size: 0.8rem;
+          }
+
+          .timeline-title {
+            font-size: 0.85rem;
+          }
+
+          .event-card {
+            padding: 16px 12px;
+            max-width: 260px;
+          }
+
+          .photo-placeholder {
+            width: 100px;
+            height: 100px;
+            font-size: 2rem;
           }
         }
       `}</style>

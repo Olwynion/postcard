@@ -91,6 +91,7 @@ export default function YearMessage({ onNext }: { onNext: () => void }) {
           opacity: 0;
           transition: opacity 0.8s ease;
           z-index: 100;
+          overflow-y: auto;
         }
 
         .message-container.visible {
@@ -201,21 +202,72 @@ export default function YearMessage({ onNext }: { onNext: () => void }) {
           box-shadow: 0 10px 35px rgba(236, 72, 153, 0.3);
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 768px) {
           .message-card {
-            padding: 30px 20px;
+            padding: 32px 24px;
+            gap: 24px;
           }
 
           .message-title {
-            font-size: 1.8rem;
+            font-size: 2rem;
+          }
+
+          .typed-text {
+            font-size: 1.2rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .message-container {
+            padding: 16px;
+          }
+
+          .message-card {
+            padding: 24px 16px;
+            gap: 18px;
+            max-width: 100%;
+          }
+
+          .message-title {
+            font-size: 1.7rem;
           }
 
           .typed-text {
             font-size: 1.1rem;
           }
 
+          .hearts-row {
+            font-size: 1.3rem;
+          }
+
+          .sparkles {
+            font-size: 1.2rem;
+            gap: 8px;
+          }
+
+          .continue-btn {
+            padding: 12px 24px;
+            font-size: 1.1rem;
+          }
+        }
+
+        @media (max-width: 360px) {
           .message-card {
-            gap: 20px;
+            padding: 18px 12px;
+            gap: 14px;
+          }
+
+          .message-title {
+            font-size: 1.4rem;
+          }
+
+          .typed-text {
+            font-size: 1rem;
+          }
+
+          .continue-btn {
+            padding: 10px 20px;
+            font-size: 1rem;
           }
         }
       `}</style>
