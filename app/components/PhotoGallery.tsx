@@ -1,13 +1,16 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
+import Image from 'next/image';
+import { getMediaUrl } from '../getMediaUrl';
 
 interface MediaItem {
   type: 'photo' | 'video';
   caption: string;
   emoji: string;
   gradient: string;
+  src?: string;
 }
 
 interface TimelineEvent {
@@ -21,99 +24,168 @@ interface TimelineEvent {
 
 const timelineEvents: TimelineEvent[] = [
   {
-    id: '1', date: '2025-08-10', displayDate: '10 авг 2025', title: 'Первая встреча', emoji: '👀',
+    id: '1', date: '2025-08-10', displayDate: '10 авг 2025', title: 'Первые шаги', emoji: '💑',
     media: [
-      { type: 'photo', caption: 'Тот самый день, когда мы встретились', emoji: '☕', gradient: 'linear-gradient(135deg, #fce7f3, #fbcfe8)' },
-      { type: 'photo', caption: 'Наша первая фотка вместе', emoji: '📸', gradient: 'linear-gradient(135deg, #fef3c7, #fde68a)' },
+      { type: 'photo', caption: 'С чего всё началось', emoji: '💑', gradient: 'linear-gradient(135deg, #fce7f3, #fbcfe8)', src: '/photos/first steps/IMG_5913.jpg' },
+      { type: 'video', caption: 'Наше первое видео', emoji: '🎥', gradient: 'linear-gradient(135deg, #ede9fe, #c4b5fd)', src: '/photos/first steps/first_video.mp4' },
     ],
   },
   {
-    id: '2', date: '2025-08-17', displayDate: '17 авг 2025', title: 'Первое предложение', emoji: '💍',
+    id: '2', date: '2025-08-30', displayDate: '30 авг 2025', title: 'Начало отношений', emoji: '❤️',
     media: [
-      { type: 'photo', caption: 'Он сказал "давай попробуем"', emoji: '💍', gradient: 'linear-gradient(135deg, #ede9fe, #c4b5fd)' },
+      { type: 'photo', caption: 'Официально вместе', emoji: '❤️', gradient: 'linear-gradient(135deg, #fecaca, #fca5a5)', src: '/photos/start/IMG_5412 (1).jpg' },
+      { type: 'photo', caption: 'Наши первые дни', emoji: '☀️', gradient: 'linear-gradient(135deg, #fef3c7, #fde68a)', src: '/photos/start/IMG_5437.jpg' },
+      { type: 'photo', caption: 'Тёплые моменты', emoji: '✨', gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)', src: '/photos/start/IMG_5438.jpg' },
     ],
   },
   {
-    id: '3', date: '2025-08-30', displayDate: '30 авг 2025', title: 'Начало отношений', emoji: '❤️',
+    id: '3', date: '2025-09-30', displayDate: '30 сен 2025', title: 'Первый месяц', emoji: '💕',
     media: [
-      { type: 'photo', caption: 'Официально вместе', emoji: '❤️', gradient: 'linear-gradient(135deg, #fecaca, #fca5a5)' },
-      { type: 'video', caption: 'Наше первое видео', emoji: '🎥', gradient: 'linear-gradient(135deg, #e0e7ff, #a5b4fc)' },
+      { type: 'photo', caption: 'Уже месяц вместе', emoji: '💕', gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)', src: '/photos/1st month/IMG_1672.jpg' },
+      { type: 'photo', caption: 'Наша прогулка', emoji: '🚶', gradient: 'linear-gradient(135deg, #e0e7ff, #a5b4fc)', src: '/photos/1st month/IMG_1685.jpg' },
+      { type: 'photo', caption: 'Счастливые', emoji: '😊', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)', src: '/photos/1st month/IMG_1733.jpg' },
+      { type: 'photo', caption: 'Первый месяц пролетел', emoji: '💫', gradient: 'linear-gradient(135deg, #dcfce7, #4ade80)', src: '/photos/1st month/IMG_1739.jpg' },
+      { type: 'photo', caption: 'Наша фотка', emoji: '📸', gradient: 'linear-gradient(135deg, #f3e8ff, #c084fc)', src: '/photos/1st month/IMG_1841.jpg' },
     ],
   },
   {
-    id: '4', date: '2025-09-30', displayDate: '30 сен 2025', title: 'Первый месяц', emoji: '💕',
+    id: '4', date: '2025-10-06', displayDate: '6 окт 2025', title: 'Твой день рождения', emoji: '🎂',
     media: [
-      { type: 'photo', caption: 'Уже месяц вместе', emoji: '💕', gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)' },
+      { type: 'photo', caption: 'С днём рождения, любимая!', emoji: '🎂', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)', src: '/photos/your bday/IMG_1570.jpg' },
+      { type: 'photo', caption: 'Наше счастье', emoji: '💖', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/your bday/IMG_1587.jpg' },
+      { type: 'photo', caption: 'Торт и свечи', emoji: '🕯️', gradient: 'linear-gradient(135deg, #f3e8ff, #c084fc)', src: '/photos/your bday/IMG_1671.jpg' },
+      { type: 'photo', caption: 'Этот день навсегда', emoji: '📸', gradient: 'linear-gradient(135deg, #e0e7ff, #6366f1)', src: '/photos/your bday/IMG_1826.jpg' },
     ],
   },
   {
-    id: '5', date: '2025-10-06', displayDate: '6 окт 2025', title: 'Твой день рождения', emoji: '🎂',
+    id: '5', date: '2025-10-11', displayDate: '11 окт 2025', title: 'Первый концерт', emoji: '🎵',
     media: [
-      { type: 'photo', caption: 'С днём рождения, любимая!', emoji: '🎂', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)' },
-      { type: 'video', caption: 'Тортик и свечки', emoji: '🕯️', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)' },
+      { type: 'photo', caption: 'Перед концертом', emoji: '🎵', gradient: 'linear-gradient(135deg, #dbeafe, #60a5fa)', src: '/photos/1st concert/IMG_1455.jpg' },
+      { type: 'photo', caption: 'На концерте', emoji: '🎤', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/1st concert/IMG_6002.jpg' },
+      { type: 'video', caption: 'Атмосфера 🔥', emoji: '🔥', gradient: 'linear-gradient(135deg, #fef3c7, #f59e0b)', src: '/photos/1st concert/IMG_6012.mp4' },
+      { type: 'video', caption: 'Любимые моменты', emoji: '🎶', gradient: 'linear-gradient(135deg, #ede9fe, #8b5cf6)', src: '/photos/1st concert/IMG_6018.mp4' },
+      { type: 'video', caption: 'Наша музыка', emoji: '🎸', gradient: 'linear-gradient(135deg, #e0e7ff, #4f46e5)', src: '/photos/1st concert/IMG_6033.mp4' },
+      { type: 'video', caption: 'Эмоции через край', emoji: '🎉', gradient: 'linear-gradient(135deg, #fecaca, #ef4444)', src: '/photos/1st concert/IMG_6036.mp4' },
+      { type: 'video', caption: 'Живой звук', emoji: '🎤', gradient: 'linear-gradient(135deg, #dcfce7, #22c55e)', src: '/photos/1st concert/IMG_6047.mp4' },
+      { type: 'video', caption: 'В ритме музыки', emoji: '🥁', gradient: 'linear-gradient(135deg, #f3e8ff, #a855f7)', src: '/photos/1st concert/IMG_6048.mp4' },
+      { type: 'video', caption: 'Момент единения', emoji: '💫', gradient: 'linear-gradient(135deg, #fef9c3, #eab308)', src: '/photos/1st concert/IMG_6050.mp4' },
+      { type: 'video', caption: 'Музыка нас связала', emoji: '🎵', gradient: 'linear-gradient(135deg, #fce7f3, #ec4899)', src: '/photos/1st concert/IMG_6051.mp4' },
+      { type: 'video', caption: 'Финальный трек', emoji: '🎶', gradient: 'linear-gradient(135deg, #e0e7ff, #6366f1)', src: '/photos/1st concert/IMG_6056.mp4' },
+      { type: 'video', caption: 'Незабываемый вечер', emoji: '🌙', gradient: 'linear-gradient(135deg, #ede9fe, #7c3aed)', src: '/photos/1st concert/IMG_6058.mp4' },
     ],
   },
   {
-    id: '6', date: '2025-10-11', displayDate: '11 окт 2025', title: 'Первый концерт', emoji: '🎵',
+    id: '6', date: '2025-10-14', displayDate: '14 окт 2025', title: 'Маленькая мечта', emoji: '✨',
     media: [
-      { type: 'photo', caption: 'Наш первый концерт', emoji: '🎵', gradient: 'linear-gradient(135deg, #dbeafe, #60a5fa)' },
+      { type: 'video', caption: 'Наша маленькая мечта', emoji: '✨', gradient: 'linear-gradient(135deg, #f3e8ff, #c084fc)', src: '/photos/small wish/IMG_6059.mp4' },
+      { type: 'video', caption: 'Момент счастья', emoji: '🌟', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)', src: '/photos/small wish/IMG_6099.mp4' },
+      { type: 'video', caption: 'Вместе навсегда', emoji: '💫', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/small wish/IMG_6101.mp4' },
     ],
   },
   {
-    id: '7', date: '2025-10-14', displayDate: '14 окт 2025', title: 'Маленькая мечта', emoji: '✨',
+    id: '7', date: '2025-11-22', displayDate: '22 ноя 2025', title: 'Первая поездка', emoji: '✈️',
     media: [
-      { type: 'photo', caption: 'Наша маленькая мечта', emoji: '✨', gradient: 'linear-gradient(135deg, #f3e8ff, #c084fc)' },
+      { type: 'photo', caption: 'Путешествие началось', emoji: '✈️', gradient: 'linear-gradient(135deg, #e0f2fe, #38bdf8)', src: '/photos/1st trip/IMG_0519.jpg' },
+      { type: 'photo', caption: 'В пути', emoji: '🚂', gradient: 'linear-gradient(135deg, #fef9c3, #eab308)', src: '/photos/1st trip/IMG_0532.jpg' },
+      { type: 'photo', caption: 'Наша остановка', emoji: '🏔️', gradient: 'linear-gradient(135deg, #dcfce7, #22c55e)', src: '/photos/1st trip/IMG_0550.jpg' },
+      { type: 'photo', caption: 'Красота вокруг', emoji: '🌄', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/1st trip/IMG_0570.jpg' },
+      { type: 'photo', caption: 'Лучшие моменты', emoji: '📸', gradient: 'linear-gradient(135deg, #e0e7ff, #6366f1)', src: '/photos/1st trip/IMG_0594.jpg' },
     ],
   },
   {
-    id: '8', date: '2025-11-22', displayDate: '22 ноя 2025', title: 'Первая поездка', emoji: '✈️',
+    id: '8', date: '2025-12-30', displayDate: '30 дек 2025 - 1 янв 2026', title: 'Новый год', emoji: '🎆',
     media: [
-      { type: 'photo', caption: 'Путешествие началось', emoji: '✈️', gradient: 'linear-gradient(135deg, #e0f2fe, #38bdf8)' },
+      { type: 'photo', caption: 'Новый год вместе', emoji: '🎆', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/new year/IMG_6285.jpg' },
+      { type: 'photo', caption: 'Наша фотография', emoji: '📸', gradient: 'linear-gradient(135deg, #fef3c7, #fde68a)', src: '/photos/new year/IMG_6287.JPG' },
+      { type: 'photo', caption: 'Ещё один момент', emoji: '✨', gradient: 'linear-gradient(135deg, #e0e7ff, #a5b4fc)', src: '/photos/new year/IMG_6337.JPG' },
+      { type: 'photo', caption: 'Счастливые моменты', emoji: '❤️', gradient: 'linear-gradient(135deg, #fecaca, #fca5a5)', src: '/photos/new year/IMG_6428.jpg' },
+      { type: 'photo', caption: 'Праздничная атмосфера', emoji: '🎉', gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)', src: '/photos/new year/IMG_6437.JPG' },
+      { type: 'photo', caption: 'Новогоднее настроение', emoji: '🎄', gradient: 'linear-gradient(135deg, #dcfce7, #22c55e)', src: '/photos/new year/IMG_6548.JPG' },
+      { type: 'photo', caption: 'Перед Новым годом', emoji: '🌟', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)', src: '/photos/new year/IMG_6550.jpg' },
+      { type: 'photo', caption: 'Фото на память', emoji: '📷', gradient: 'linear-gradient(135deg, #f3e8ff, #c084fc)', src: '/photos/new year/IMG_1363.jpg' },
+      { type: 'video', caption: 'Видео праздника', emoji: '🎥', gradient: 'linear-gradient(135deg, #ede9fe, #8b5cf6)', src: '/photos/new year/IMG_0342.mp4' },
     ],
   },
   {
-    id: '9', date: '2025-12-30', displayDate: '30 дек 2025 - 1 янв 2026', title: 'Новый год', emoji: '🎆',
+    id: '9', date: '2026-01-25', displayDate: '25 янв 2026', title: 'Новогодняя Москва', emoji: '🏙️',
     media: [
-      { type: 'photo', caption: 'Новый год вместе', emoji: '🎆', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)' },
-      { type: 'video', caption: 'Фейерверки', emoji: '🎇', gradient: 'linear-gradient(135deg, #ede9fe, #8b5cf6)' },
+      { type: 'photo', caption: 'Гуляли по Москве', emoji: '🏙️', gradient: 'linear-gradient(135deg, #dbeafe, #3b82f6)', src: '/photos/NY Moscow/IMG_1646.jpg' },
+      { type: 'photo', caption: 'Красная площадь', emoji: '🏛️', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/NY Moscow/IMG_1658.jpg' },
+      { type: 'photo', caption: 'Новогодняя столица', emoji: '🎄', gradient: 'linear-gradient(135deg, #dcfce7, #22c55e)', src: '/photos/NY Moscow/IMG_1793.jpg' },
+      { type: 'photo', caption: 'Москва-Сити', emoji: '🏗️', gradient: 'linear-gradient(135deg, #f3e8ff, #c084fc)', src: '/photos/NY Moscow/IMG_2195.jpg' },
+      { type: 'photo', caption: 'Красивый вечер', emoji: '🌆', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)', src: '/photos/NY Moscow/IMG_2692.jpg' },
     ],
   },
   {
-    id: '10', date: '2026-01-25', displayDate: '25 янв 2026', title: 'Новогодняя Москва', emoji: '🏙️',
+    id: '10', date: '2026-02-28', displayDate: '28 фев 2026', title: '6 месяцев', emoji: '💖',
     media: [
-      { type: 'photo', caption: 'Гуляли по Москве', emoji: '🏙️', gradient: 'linear-gradient(135deg, #dbeafe, #3b82f6)' },
+      { type: 'photo', caption: 'Полгода любви', emoji: '💖', gradient: 'linear-gradient(135deg, #fce7f3, #ec4899)', src: '/photos/6 months/IMG_3160.jpg' },
+      { type: 'photo', caption: 'Наше счастье', emoji: '😊', gradient: 'linear-gradient(135deg, #fef3c7, #f59e0b)', src: '/photos/6 months/IMG_3178.jpg' },
+      { type: 'photo', caption: 'Полгода вместе', emoji: '💫', gradient: 'linear-gradient(135deg, #e0e7ff, #6366f1)', src: '/photos/6 months/IMG_3186.jpg' },
+      { type: 'photo', caption: 'Счастливы', emoji: '🥰', gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)', src: '/photos/6 months/IMG_3195.jpg' },
     ],
   },
   {
-    id: '11', date: '2026-02-28', displayDate: '28 фев 2026', title: '6 месяцев', emoji: '💖',
+    id: '11', date: '2026-02-28', displayDate: '28 фев - 12 май 2026', title: 'Микс', emoji: '📸',
     media: [
-      { type: 'photo', caption: 'Полгода любви', emoji: '💖', gradient: 'linear-gradient(135deg, #fce7f3, #ec4899)' },
+      { type: 'photo', caption: 'Наши будни', emoji: '☕', gradient: 'linear-gradient(135deg, #fef3c7, #f59e0b)', src: '/photos/Mix/IMG_3470.jpg' },
+      { type: 'photo', caption: 'Повседневное счастье', emoji: '✨', gradient: 'linear-gradient(135deg, #dbeafe, #60a5fa)', src: '/photos/Mix/IMG_3607.jpg' },
+      { type: 'photo', caption: 'Вместе', emoji: '💑', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/Mix/IMG_3721.jpg' },
+      { type: 'photo', caption: 'Наше время', emoji: '⏰', gradient: 'linear-gradient(135deg, #f3e8ff, #c084fc)', src: '/photos/Mix/IMG_3859.jpg' },
+      { type: 'photo', caption: 'Момент счастья', emoji: '😊', gradient: 'linear-gradient(135deg, #fef9c3, #eab308)', src: '/photos/Mix/IMG_6547.jpg' },
     ],
   },
   {
-    id: '12', date: '2026-02-28', displayDate: '28 фев - 12 май 2026', title: 'Микс', emoji: '📸',
+    id: '12', date: '2026-05-12', displayDate: '12 май 2026', title: 'Мой ДР', emoji: '🎉',
     media: [
-      { type: 'photo', caption: 'Наши лучшие моменты', emoji: '📸', gradient: 'linear-gradient(135deg, #fef3c7, #f59e0b)' },
-      { type: 'video', caption: 'Короткое видео', emoji: '🎬', gradient: 'linear-gradient(135deg, #e0e7ff, #6366f1)' },
+      { type: 'photo', caption: 'Мой день рождения', emoji: '🎉', gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)', src: '/photos/My bday/IMG_4113.jpg' },
+      { type: 'photo', caption: 'Праздник', emoji: '🎂', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)', src: '/photos/My bday/IMG_4119.jpg' },
     ],
   },
   {
-    id: '13', date: '2026-05-12', displayDate: '12 май 2026', title: 'Мой ДР', emoji: '🎉',
+    id: '13', date: '2026-05-30', displayDate: '30 май 2026', title: '9 месяцев', emoji: '💗',
     media: [
-      { type: 'photo', caption: 'Мой день рождения', emoji: '🎉', gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)' },
+      { type: 'photo', caption: '9 месяцев счастья', emoji: '💗', gradient: 'linear-gradient(135deg, #fecaca, #fb7185)', src: '/photos/9 months/IMG_4251.jpg' },
+      { type: 'photo', caption: 'Наши дни', emoji: '☀️', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)', src: '/photos/9 months/IMG_4255.jpg' },
+      { type: 'photo', caption: 'Радость', emoji: '😊', gradient: 'linear-gradient(135deg, #e0e7ff, #6366f1)', src: '/photos/9 months/IMG_4266.jpg' },
     ],
   },
   {
-    id: '14', date: '2026-05-30', displayDate: '30 май 2026', title: '9 месяцев', emoji: '💗',
+    id: '14', date: '2026-06-01', displayDate: '1 июн 2026', title: 'Наше совместное лето', emoji: '☀️',
     media: [
-      { type: 'photo', caption: '9 месяцев счастья', emoji: '💗', gradient: 'linear-gradient(135deg, #fecaca, #fb7185)' },
-    ],
-  },
-  {
-    id: '15', date: '2026-06-01', displayDate: '1 июн 2026', title: 'Наше совместное лето', emoji: '☀️',
-    media: [
-      { type: 'photo', caption: 'Лето — это мы', emoji: '☀️', gradient: 'linear-gradient(135deg, #fef9c3, #eab308)' },
-      { type: 'video', caption: 'Летние деньки', emoji: '🌻', gradient: 'linear-gradient(135deg, #dcfce7, #22c55e)' },
+      { type: 'photo', caption: 'Лето — это мы', emoji: '☀️', gradient: 'linear-gradient(135deg, #fef9c3, #eab308)', src: '/photos/summer/IMG_4400.JPG' },
+      { type: 'photo', caption: 'Жаркие деньки', emoji: '🌻', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/summer/IMG_4408.JPG' },
+      { type: 'photo', caption: 'Наши приключения', emoji: '🌊', gradient: 'linear-gradient(135deg, #dbeafe, #3b82f6)', src: '/photos/summer/IMG_4452.JPG' },
+      { type: 'photo', caption: 'Вместе хорошо', emoji: '💑', gradient: 'linear-gradient(135deg, #f3e8ff, #c084fc)', src: '/photos/summer/IMG_4486.JPG' },
+      { type: 'photo', caption: 'Красота природы', emoji: '🌳', gradient: 'linear-gradient(135deg, #dcfce7, #22c55e)', src: '/photos/summer/IMG_4595.JPG' },
+      { type: 'photo', caption: 'На прогулке', emoji: '🚶', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)', src: '/photos/summer/IMG_4624.JPG' },
+      { type: 'photo', caption: 'Отдыхаем', emoji: '😎', gradient: 'linear-gradient(135deg, #e0e7ff, #6366f1)', src: '/photos/summer/IMG_4738.JPG' },
+      { type: 'photo', caption: 'Вместе навсегда', emoji: '💕', gradient: 'linear-gradient(135deg, #fce7f3, #ec4899)', src: '/photos/summer/IMG_4740.JPG' },
+      { type: 'photo', caption: 'Наше лето', emoji: '🌞', gradient: 'linear-gradient(135deg, #fef9c3, #eab308)', src: '/photos/summer/IMG_4836.JPG' },
+      { type: 'photo', caption: 'Лёгкость бытия', emoji: '🦋', gradient: 'linear-gradient(135deg, #f3e8ff, #a855f7)', src: '/photos/summer/IMG_4850.JPG' },
+      { type: 'photo', caption: 'Счастливые моменты', emoji: '😊', gradient: 'linear-gradient(135deg, #fecaca, #fca5a5)', src: '/photos/summer/IMG_4859.JPG' },
+      { type: 'photo', caption: 'Вместе', emoji: '💑', gradient: 'linear-gradient(135deg, #dbeafe, #60a5fa)', src: '/photos/summer/IMG_4891.JPG' },
+      { type: 'photo', caption: 'Тёплый день', emoji: '🌸', gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)', src: '/photos/summer/IMG_4909.JPG' },
+      { type: 'photo', caption: 'Наше счастье', emoji: '❤️', gradient: 'linear-gradient(135deg, #fef3c7, #f59e0b)', src: '/photos/summer/IMG_4916.JPG' },
+      { type: 'photo', caption: 'Красота', emoji: '🌺', gradient: 'linear-gradient(135deg, #f3e8ff, #c084fc)', src: '/photos/summer/IMG_4939.JPG' },
+      { type: 'photo', caption: 'Улыбка', emoji: '😄', gradient: 'linear-gradient(135deg, #e0e7ff, #4f46e5)', src: '/photos/summer/IMG_4958.JPG' },
+      { type: 'photo', caption: 'Наши моменты', emoji: '📸', gradient: 'linear-gradient(135deg, #dcfce7, #4ade80)', src: '/photos/summer/IMG_4986.JPG' },
+      { type: 'video', caption: 'Летнее видео', emoji: '🎥', gradient: 'linear-gradient(135deg, #ede9fe, #8b5cf6)', src: '/photos/summer/IMG_5159.mp4' },
+      { type: 'photo', caption: 'Закат', emoji: '🌅', gradient: 'linear-gradient(135deg, #fee2e2, #fb923c)', src: '/photos/summer/IMG_5218.JPG' },
+      { type: 'photo', caption: 'Вместе навсегда', emoji: '💞', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/summer/IMG_5260.JPG' },
+      { type: 'photo', caption: 'Наше лето', emoji: '☀️', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)', src: '/photos/summer/IMG_5323.JPG' },
+      { type: 'photo', caption: 'Летнее настроение', emoji: '🌻', gradient: 'linear-gradient(135deg, #dbeafe, #3b82f6)', src: '/photos/summer/IMG_5326.JPG' },
+      { type: 'photo', caption: 'Прекрасный день', emoji: '🌞', gradient: 'linear-gradient(135deg, #dcfce7, #22c55e)', src: '/photos/summer/IMG_5353.JPG' },
+      { type: 'photo', caption: 'Наше время', emoji: '⏳', gradient: 'linear-gradient(135deg, #f3e8ff, #a855f7)', src: '/photos/summer/IMG_5550.JPG' },
+      { type: 'photo', caption: 'Вместе', emoji: '💗', gradient: 'linear-gradient(135deg, #fce7f3, #ec4899)', src: '/photos/summer/IMG_5553.JPG' },
+      { type: 'photo', caption: 'Счастливы', emoji: '😊', gradient: 'linear-gradient(135deg, #fef9c3, #eab308)', src: '/photos/summer/IMG_5572.JPG' },
+      { type: 'photo', caption: 'Тёплый вечер', emoji: '🌆', gradient: 'linear-gradient(135deg, #fee2e2, #fb923c)', src: '/photos/summer/IMG_5575.JPG' },
+      { type: 'photo', caption: 'Наши дни', emoji: '📅', gradient: 'linear-gradient(135deg, #e0e7ff, #6366f1)', src: '/photos/summer/IMG_5722.JPG' },
+      { type: 'photo', caption: 'Радость', emoji: '🥰', gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)', src: '/photos/summer/IMG_5723.JPG' },
+      { type: 'photo', caption: 'Наша любовь', emoji: '❤️', gradient: 'linear-gradient(135deg, #fecaca, #fca5a5)', src: '/photos/summer/IMG_5835.JPG' },
+      { type: 'photo', caption: 'Летняя сказка', emoji: '✨', gradient: 'linear-gradient(135deg, #f3e8ff, #c084fc)', src: '/photos/summer/IMG_9929.jpg' },
+      { type: 'photo', caption: 'Наша история', emoji: '💫', gradient: 'linear-gradient(135deg, #dbeafe, #60a5fa)', src: '/photos/summer/IMG_9931.JPG' },
+      { type: 'photo', caption: 'Лето с тобой', emoji: '🌞', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)', src: '/photos/summer/IMG_9973.JPG' },
     ],
   },
 ];
@@ -204,6 +276,18 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
     setCurrentMediaIndex((prev) => (prev - 1 + selectedEvent.media.length) % selectedEvent.media.length);
   };
 
+  useEffect(() => {
+    if (!selectedEvent) return;
+    const nextIdx = (currentMediaIndex + 1) % selectedEvent.media.length;
+    const prevIdx = (currentMediaIndex - 1 + selectedEvent.media.length) % selectedEvent.media.length;
+    [selectedEvent.media[nextIdx], selectedEvent.media[prevIdx]].forEach((media) => {
+      if (media.src && media.type === 'photo') {
+        const img = document.createElement('img');
+        img.src = getMediaUrl(media.src);
+      }
+    });
+  }, [selectedEvent, currentMediaIndex]);
+
   if (!mounted) {
     return null;
   }
@@ -282,8 +366,31 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="fullscreen-media" style={{ background: fullscreenMedia.gradient }}>
-                <span style={{ fontSize: '6rem' }}>{fullscreenMedia.emoji}</span>
-                {fullscreenMedia.type === 'video' && (
+                {fullscreenMedia.type === 'video' ? (
+                  fullscreenMedia.src ? (
+                    <video
+                      src={getMediaUrl(fullscreenMedia.src)}
+                      className="fullscreen-video"
+                      controls
+                      playsInline
+                      autoPlay
+                      preload="metadata"
+                    />
+                  ) : (
+                    <span style={{ fontSize: '6rem' }}>{fullscreenMedia.emoji}</span>
+                  )
+                ) : fullscreenMedia.src ? (
+                  <Image
+                    src={getMediaUrl(fullscreenMedia.src)}
+                    alt={fullscreenMedia.caption}
+                    className="fullscreen-img"
+                    fill
+                    sizes="(max-width: 768px) 90vw, 600px"
+                  />
+                ) : (
+                  <span style={{ fontSize: '6rem' }}>{fullscreenMedia.emoji}</span>
+                )}
+                {fullscreenMedia.type === 'video' && !fullscreenMedia.src && (
                   <span className="fullscreen-play">▶</span>
                 )}
               </div>
@@ -328,8 +435,32 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
                       style={{ background: selectedEvent.media[currentMediaIndex].gradient }}
                       onClick={() => setFullscreenMedia(selectedEvent.media[currentMediaIndex])}
                     >
-                      <span className="media-emoji">{selectedEvent.media[currentMediaIndex].emoji}</span>
-                      {selectedEvent.media[currentMediaIndex].type === 'video' && (
+                      {selectedEvent.media[currentMediaIndex].type === 'video' ? (
+                        selectedEvent.media[currentMediaIndex].src ? (
+                          <video
+                            src={getMediaUrl(selectedEvent.media[currentMediaIndex].src)}
+                            className="media-video"
+                            controls
+                            playsInline
+                            muted
+                            preload="metadata"
+                          />
+                        ) : (
+                          <span className="media-emoji">{selectedEvent.media[currentMediaIndex].emoji}</span>
+                        )
+                      ) : selectedEvent.media[currentMediaIndex].src ? (
+                        <Image
+                          src={getMediaUrl(selectedEvent.media[currentMediaIndex].src)}
+                          alt={selectedEvent.media[currentMediaIndex].caption}
+                          className="media-img"
+                          fill
+                          sizes="(max-width: 768px) 280px, 280px"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <span className="media-emoji">{selectedEvent.media[currentMediaIndex].emoji}</span>
+                      )}
+                      {selectedEvent.media[currentMediaIndex].type === 'video' && !selectedEvent.media[currentMediaIndex].src && (
                         <span className="media-play-icon">▶</span>
                       )}
                       <span className="media-expand">⛶</span>
@@ -816,6 +947,18 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         }
 
+        .media-img,
+        .media-video {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: inherit;
+        }
+
+        .media-video {
+          border-radius: inherit;
+        }
+
         .media-expand {
           position: absolute;
           bottom: 10px;
@@ -839,7 +982,12 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
 
         .media-dots {
           display: flex;
-          gap: 10px;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 8px;
+          max-height: 80px;
+          overflow-y: auto;
+          padding: 4px;
         }
 
         .media-dot {
@@ -924,6 +1072,18 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           font-size: 2.5rem;
           color: white;
           backdrop-filter: blur(5px);
+        }
+
+        .fullscreen-img,
+        .fullscreen-video {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          border-radius: inherit;
+        }
+
+        .fullscreen-video {
+          border-radius: inherit;
         }
 
         .fullscreen-caption {

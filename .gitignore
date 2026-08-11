@@ -36,6 +36,13 @@ yarn-error.log*
 # vercel
 .vercel
 
+# media (stored in postcard-media repo)
+/public/photos/
+/app/photos/
+
+# local package-lock backup
+/package-lock.json.bak
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

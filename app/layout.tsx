@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Playfair_Display, Caveat } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,6 +36,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="ru">
       <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${caveat.variable}`}>
         {children}
+        <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );
