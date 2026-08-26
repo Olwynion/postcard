@@ -1,36 +1,147 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Postcard — сайт «Наша история любви»
 
-## Getting Started
+Проект на Next.js (Vercel). Главная «фишка» — вкладка **«Наша история любви»**: таймлайн-квиз с фото и видео из жизни пары.
 
-First, run the development server:
+Время и все гайды ниже написаны для того, чтобы контент можно было менять **без знания кода**.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 1. Подписи под фото и видео
+
+Подписи лежат в одном файле: **`app/data/captions.ts`**.
+
+Это простой список «путь → подпись»:
+
+```ts
+export const captions: Record<string, string> = {
+  "/photos/first steps/IMG_5913.jpg": "Первое сердечко",
+  "/photos/1st concert/IMG_6051.mp4": "Фиолетовый вечер",
+  "/photos/summer/IMG_5835.JPG": "Поцелуй у антикварного дивана",
+  // ...
+};
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Сменить текст** — замени текст после двоеточия.
+- **Добавить подпись новому файлу** — добавь строку `"путь": "подпись"`.
+- Если у файла нет подписи — под фото показывается имя файла.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Правила строки: путь в кавычках `"..."`, после подписи — запятая.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 2. Вопросы квиза, фото и их порядок
 
-To learn more about Next.js, take a look at the following resources:
+Данные квиза — в файле **`app/data/quiz.ts`**.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Структура — список периодов, у каждого:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```ts
+{
+  id: "8",
+  date: "2025-12-30",
+  displayDate: "30 дек 2025 - 1 янв 2026",   // как показывать дату
+  title: "Новый год",                         // название раздела
+  emoji: "🎆",                                // иконка раздела
+  questions: [ ... ],                         // вопросы квиза
+  gallery: [ "/photos/new year/IMG_6285.jpg", ... ],  // фото/видео карусели
+}
+```
 
-## Deploy on Vercel
+У каждого вопроса:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```ts
+{
+  id: "q1",
+  text: "Какого цвета был сноуборд у Даши на НГ?",  // текст вопроса
+  options: ["Красный", "Черный", "Зеленый", "Синий"], // варианты ответа
+  correctIndex: 3,        // индекс правильного ответа (с 0)
+  reveal: "/photos/new year/IMG_6285.jpg",  // что показать после правильного ответа
+}
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Как менять
+
+- **Порядок/состав фото в блоке** — переставляй, добавляй или удаляй строки в `gallery`:
+  что выше в списке — то идёт первым.
+- **Сменить фото после вопроса** — поменяй путь в `reveal`.
+- **Пример «рокировки»** (после Q1 фото 2, после Q2 фото 1):
+  ```
+  reveal: "/photos/X/фото2.jpg"   // в вопросе №1
+  reveal: "/photos/X/фото1.jpg"   // в вопросе №2
+  ```
+- **Блок без вопросов** (просто галерея, без квиза) — оставь `questions: []` (пример — блок «Микс»). Работает и наоборот: можно добавить вопрос любому текущему «чистому» блоку.
+
+`correctIndex` считается с нуля: первый вариант = `0`, второй = `1`, и т.д.
+
+---
+
+## 3. Как добавить новое фото или видео
+
+Важно: на сайте медиа грузятся **не из локальной папки**, а из отдельного GitHub-репозитория `Olwynion/postcard-media` (папка `photos/`). `public/photos/` в этом проекте — локальная копия, из которой генерируются прямые ссылки.
+
+Чтобы добавить новый файл:
+
+1. Положи файл в локальную папку: `public/photos/<название блока>/<файл>`.
+   - Название блока = имя существующей подпапки (например `summer`, `new year`, `1st month`).
+2. Загрузи тот же файл в GitHub-репозиторий **`Olwynion/postcard-media`** по пути `photos/<название блока>/<файл>` (без этого фото будет 404).
+3. Перегенерируй прямые ссылки:
+   ```bash
+   node scripts/generate-urls.mjs
+   ```
+   Скрипт обновит `app/getMediaUrl.ts`.
+4. Добавь файл в `gallery` (или `reveal`) блока в `app/data/quiz.ts`.
+5. При желании добавь подпись в `app/data/captions.ts` (см. раздел 1).
+
+> Видео определяется по расширению: `.mp4/.mov/.webm/.m4v` — видео, остальное — фото.
+
+---
+
+## 4. Локальный запуск и проверка
+
+Поднять локальный сервер для просмотра:
+
+```bash
+npm run dev      # затем открыть http://localhost:3000
+```
+
+Проверка кода перед деплоем:
+
+```bash
+npx tsc --noEmit    # проверка типов
+npm run build       # продакшен-сборка
+```
+
+---
+
+## 5. Деплой на Vercel (вручную)
+
+Деплой делается вручную через Vercel CLI (CI/CD и авто-деплой из git не настроены):
+
+```bash
+vercel --prod --yes
+```
+
+В конце команда выведет адрес продакшена (алиас — `https://postcard-wine.vercel.app`).
+
+---
+
+## 6. Пуш изменений в Git
+
+```bash
+git add -A
+git commit -m "описание изменений"
+git push origin master
+```
+
+Формат коммита — обычный описательный, на усмотрение. Ветка по умолчанию — `master`.
+
+---
+
+## Главные файлы для правки контента
+
+| Что менять | Файл |
+|---|---|
+| Подписи под фото/видео | `app/data/captions.ts` |
+| Вопросы, фото, порядок блоков | `app/data/quiz.ts` |
+| Новые ссылки на медиа | генерируется `scripts/generate-urls.mjs` |
+| Верстка квиза | `app/components/PhotoGallery.tsx` |
