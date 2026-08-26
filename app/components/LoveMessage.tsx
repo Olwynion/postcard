@@ -89,7 +89,7 @@ export default function LoveMessage({ onBack }: { onBack?: () => void }) {
 
           <div className="signature">
             <p>С любовью, навсегда</p>
-            <p className="year">❤️ Наш 2024-2025 ❤️</p>
+            <p className="year">❤️ Наш 2025-2026 ❤️</p>
           </div>
 
           <div className="sparkles">

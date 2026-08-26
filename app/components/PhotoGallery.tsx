@@ -43,6 +43,12 @@ const timelineEvents: TimelineEvent[] = [
         correctIndex: 2,
         answerMedia: { type: 'photo', caption: 'С чего всё началось', emoji: '💑', gradient: 'linear-gradient(135deg, #fce7f3, #fbcfe8)', src: '/photos/first steps/IMG_5913.jpg' },
       },
+      {
+        id: 'q2', text: 'Кто сидел на лавочке, за которой Андрей сделал Даше предложение?',
+        options: ['Данек', 'Ярик', 'Владос', 'Денчик'],
+        correctIndex: 2,
+        answerMedia: { type: 'photo', caption: 'Наше первое видео', emoji: '🎥', gradient: 'linear-gradient(135deg, #ede9fe, #c4b5fd)', src: '/photos/first steps/first_video.mp4' },
+      },
     ],
     gallery: [
       { type: 'photo', caption: 'С чего всё началось', emoji: '💑', gradient: 'linear-gradient(135deg, #fce7f3, #fbcfe8)', src: '/photos/first steps/IMG_5913.jpg' },
@@ -63,12 +69,6 @@ const timelineEvents: TimelineEvent[] = [
         options: ['Данек', 'Ярик', 'Селфи'],
         correctIndex: 1,
         answerMedia: { type: 'photo', caption: 'Наши первые дни', emoji: '☀️', gradient: 'linear-gradient(135deg, #fef3c7, #fde68a)', src: '/photos/start/IMG_5437.jpg' },
-      },
-      {
-        id: 'q3', text: 'Кто сидел на лавочке, за которой Андрей сделал Даше предложение?',
-        options: ['Данек', 'Ярик', 'Владос', 'Денчик'],
-        correctIndex: 2,
-        answerMedia: { type: 'photo', caption: 'Тёплые моменты', emoji: '✨', gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)', src: '/photos/start/IMG_5438.jpg' },
       },
     ],
     gallery: [
@@ -127,12 +127,6 @@ const timelineEvents: TimelineEvent[] = [
         correctIndex: 1,
         answerMedia: { type: 'photo', caption: 'Перед концертом', emoji: '🎵', gradient: 'linear-gradient(135deg, #dbeafe, #60a5fa)', src: '/photos/1st concert/IMG_1455.jpg' },
       },
-      {
-        id: 'q2', text: 'Какой песни не было на концерте Зверей в Иваново?',
-        options: ['Снегопад', 'Напитки покрепче', 'Капканы', 'Дожди-пистолеты'],
-        correctIndex: 0,
-        answerMedia: { type: 'photo', caption: 'На концерте', emoji: '🎤', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/1st concert/IMG_6002.jpg' },
-      },
     ],
     gallery: [
       { type: 'photo', caption: 'Перед концертом', emoji: '🎵', gradient: 'linear-gradient(135deg, #dbeafe, #60a5fa)', src: '/photos/1st concert/IMG_1455.jpg' },
@@ -150,8 +144,15 @@ const timelineEvents: TimelineEvent[] = [
     ],
   },
   {
-    id: '6', date: '2025-10-14', displayDate: '14 окт 2025', title: 'Маленькая мечта', emoji: '✨',
-    questions: [],
+    id: '6', date: '2025-10-14', displayDate: '14 окт 2025',     title: 'Маленькая мечта', emoji: '✨',
+    questions: [
+      {
+        id: 'q1', text: 'Какой песни не было на концерте Зверей в Иваново?',
+        options: ['Снегопад', 'Напитки покрепче', 'Капканы', 'Дожди-пистолеты'],
+        correctIndex: 0,
+        answerMedia: { type: 'video', caption: 'Наша маленькая мечта', emoji: '✨', gradient: 'linear-gradient(135deg, #f3e8ff, #c084fc)', src: '/photos/small wish/IMG_6059.mp4' },
+      },
+    ],
     gallery: [
       { type: 'video', caption: 'Наша маленькая мечта', emoji: '✨', gradient: 'linear-gradient(135deg, #f3e8ff, #c084fc)', src: '/photos/small wish/IMG_6059.mp4' },
       { type: 'video', caption: 'Момент счастья', emoji: '🌟', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)', src: '/photos/small wish/IMG_6099.mp4' },
@@ -166,12 +167,6 @@ const timelineEvents: TimelineEvent[] = [
         options: ['В Москву', 'В Лунево', 'В Ярославль', 'На бали'],
         correctIndex: 2,
         answerMedia: { type: 'photo', caption: 'Путешествие началось', emoji: '✈️', gradient: 'linear-gradient(135deg, #e0f2fe, #38bdf8)', src: '/photos/1st trip/IMG_0519.jpg' },
-      },
-      {
-        id: 'q2', text: 'Где Даша потеряла телефон в Луневке?',
-        options: ['На катке', 'По дороге до номера', 'В ресторане', 'На гуляниях'],
-        correctIndex: 3,
-        answerMedia: { type: 'photo', caption: 'В пути', emoji: '🚂', gradient: 'linear-gradient(135deg, #fef9c3, #eab308)', src: '/photos/1st trip/IMG_0532.jpg' },
       },
     ],
     gallery: [
@@ -190,6 +185,12 @@ const timelineEvents: TimelineEvent[] = [
         options: ['Красный', 'Черный', 'Зеленый', 'Синий'],
         correctIndex: 3,
         answerMedia: { type: 'photo', caption: 'Новый год вместе', emoji: '🎆', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/new year/IMG_6285.jpg' },
+      },
+      {
+        id: 'q2', text: 'Где Даша потеряла телефон в Луневке?',
+        options: ['На катке', 'По дороге до номера', 'В ресторане', 'На гуляниях'],
+        correctIndex: 3,
+        answerMedia: { type: 'photo', caption: 'Новогоднее настроение', emoji: '🎄', gradient: 'linear-gradient(135deg, #dcfce7, #22c55e)', src: '/photos/new year/IMG_6548.JPG' },
       },
     ],
     gallery: [
