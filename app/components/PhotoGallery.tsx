@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { getMediaUrl } from '../getMediaUrl';
+import { captions } from '../data/captions';
 import { timelineEvents, type MediaItem, type MediaRef, type TimelineEvent } from '../data/quiz';
 
 type ModalPhase = 'question' | 'reveal' | 'gallery';
@@ -25,7 +26,7 @@ function toMedia(ref: MediaRef, index: number): MediaItem {
   const fileName = ref.split('/').pop()?.replace(/\.[^.]+$/, '') ?? '';
   return {
     type: isVideo ? 'video' : 'photo',
-    caption: fileName,
+    caption: captions[ref] ?? fileName,
     emoji: isVideo ? '🎥' : '📷',
     gradient: gradientPalette[index % gradientPalette.length],
     src: ref,
