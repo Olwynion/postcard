@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import { getMediaUrl } from '../getMediaUrl';
 
@@ -13,26 +13,65 @@ interface MediaItem {
   src?: string;
 }
 
+interface QuizQuestion {
+  id: string;
+  text: string;
+  options: string[];
+  correctIndex: number;
+  answerMedia: MediaItem;
+}
+
 interface TimelineEvent {
   id: string;
   date: string;
   displayDate: string;
   title: string;
   emoji: string;
-  media: MediaItem[];
+  questions: QuizQuestion[];
+  gallery: MediaItem[];
 }
+
+type ModalPhase = 'question' | 'reveal' | 'gallery';
 
 const timelineEvents: TimelineEvent[] = [
   {
     id: '1', date: '2025-08-10', displayDate: '10 авг 2025', title: 'Первые шаги', emoji: '💑',
-    media: [
+    questions: [
+      {
+        id: 'q1', text: 'Что мы показываем на нашей первой совместной фото?',
+        options: ['Знак френдзоны', 'Класс', 'Сердечко', 'Два пальца'],
+        correctIndex: 2,
+        answerMedia: { type: 'photo', caption: 'С чего всё началось', emoji: '💑', gradient: 'linear-gradient(135deg, #fce7f3, #fbcfe8)', src: '/photos/first steps/IMG_5913.jpg' },
+      },
+    ],
+    gallery: [
       { type: 'photo', caption: 'С чего всё началось', emoji: '💑', gradient: 'linear-gradient(135deg, #fce7f3, #fbcfe8)', src: '/photos/first steps/IMG_5913.jpg' },
       { type: 'video', caption: 'Наше первое видео', emoji: '🎥', gradient: 'linear-gradient(135deg, #ede9fe, #c4b5fd)', src: '/photos/first steps/first_video.mp4' },
     ],
   },
   {
     id: '2', date: '2025-08-30', displayDate: '30 авг 2025', title: 'Начало отношений', emoji: '❤️',
-    media: [
+    questions: [
+      {
+        id: 'q1', text: 'Где начались наши отношения?',
+        options: ['В кофе руме', 'На лавочке в соседнем дворе', 'В подъезде', 'В августе'],
+        correctIndex: 1,
+        answerMedia: { type: 'photo', caption: 'Официально вместе', emoji: '❤️', gradient: 'linear-gradient(135deg, #fecaca, #fca5a5)', src: '/photos/start/IMG_5412 (1).jpg' },
+      },
+      {
+        id: 'q2', text: 'Кто фотографировал нас на Пушке 31 числа?',
+        options: ['Данек', 'Ярик', 'Селфи'],
+        correctIndex: 1,
+        answerMedia: { type: 'photo', caption: 'Наши первые дни', emoji: '☀️', gradient: 'linear-gradient(135deg, #fef3c7, #fde68a)', src: '/photos/start/IMG_5437.jpg' },
+      },
+      {
+        id: 'q3', text: 'Кто сидел на лавочке, за которой Андрей сделал Даше предложение?',
+        options: ['Данек', 'Ярик', 'Владос', 'Денчик'],
+        correctIndex: 2,
+        answerMedia: { type: 'photo', caption: 'Тёплые моменты', emoji: '✨', gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)', src: '/photos/start/IMG_5438.jpg' },
+      },
+    ],
+    gallery: [
       { type: 'photo', caption: 'Официально вместе', emoji: '❤️', gradient: 'linear-gradient(135deg, #fecaca, #fca5a5)', src: '/photos/start/IMG_5412 (1).jpg' },
       { type: 'photo', caption: 'Наши первые дни', emoji: '☀️', gradient: 'linear-gradient(135deg, #fef3c7, #fde68a)', src: '/photos/start/IMG_5437.jpg' },
       { type: 'photo', caption: 'Тёплые моменты', emoji: '✨', gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)', src: '/photos/start/IMG_5438.jpg' },
@@ -40,7 +79,21 @@ const timelineEvents: TimelineEvent[] = [
   },
   {
     id: '3', date: '2025-09-30', displayDate: '30 сен 2025', title: 'Первый месяц', emoji: '💕',
-    media: [
+    questions: [
+      {
+        id: 'q1', text: 'Какой букет был на месяц отношений?',
+        options: ['Розовые розы', 'Бежевые розы', 'Красно-белые розы', 'Другие розовые розы :)'],
+        correctIndex: 2,
+        answerMedia: { type: 'photo', caption: 'Уже месяц вместе', emoji: '💕', gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)', src: '/photos/1st month/IMG_1672.jpg' },
+      },
+      {
+        id: 'q2', text: 'Что мы делали на месяц отношений?',
+        options: ['Сидели дома', 'Просто гуляли', 'Ходили вкусно покушать', 'Ходили за зарплатой в столбар'],
+        correctIndex: 3,
+        answerMedia: { type: 'photo', caption: 'Наша прогулка', emoji: '🚶', gradient: 'linear-gradient(135deg, #e0e7ff, #a5b4fc)', src: '/photos/1st month/IMG_1685.jpg' },
+      },
+    ],
+    gallery: [
       { type: 'photo', caption: 'Уже месяц вместе', emoji: '💕', gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)', src: '/photos/1st month/IMG_1672.jpg' },
       { type: 'photo', caption: 'Наша прогулка', emoji: '🚶', gradient: 'linear-gradient(135deg, #e0e7ff, #a5b4fc)', src: '/photos/1st month/IMG_1685.jpg' },
       { type: 'photo', caption: 'Счастливые', emoji: '😊', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)', src: '/photos/1st month/IMG_1733.jpg' },
@@ -50,7 +103,15 @@ const timelineEvents: TimelineEvent[] = [
   },
   {
     id: '4', date: '2025-10-06', displayDate: '6 окт 2025', title: 'Твой день рождения', emoji: '🎂',
-    media: [
+    questions: [
+      {
+        id: 'q1', text: 'Кто пришёл поздравлять тебя в 12 ночи?',
+        options: ['Данек, Алина, Ярик, Я', 'Данек, Алина, Лева, Ярик, Я', 'Алина, Лева, Ярик, Я', 'Данек, Алина, Лева, Ярик, Я, т-фест'],
+        correctIndex: 3,
+        answerMedia: { type: 'photo', caption: 'С днём рождения, любимая!', emoji: '🎂', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)', src: '/photos/your bday/IMG_1570.jpg' },
+      },
+    ],
+    gallery: [
       { type: 'photo', caption: 'С днём рождения, любимая!', emoji: '🎂', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)', src: '/photos/your bday/IMG_1570.jpg' },
       { type: 'photo', caption: 'Наше счастье', emoji: '💖', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/your bday/IMG_1587.jpg' },
       { type: 'photo', caption: 'Торт и свечи', emoji: '🕯️', gradient: 'linear-gradient(135deg, #f3e8ff, #c084fc)', src: '/photos/your bday/IMG_1671.jpg' },
@@ -59,7 +120,21 @@ const timelineEvents: TimelineEvent[] = [
   },
   {
     id: '5', date: '2025-10-11', displayDate: '11 окт 2025', title: 'Первый концерт', emoji: '🎵',
-    media: [
+    questions: [
+      {
+        id: 'q1', text: 'На какой концерт мы сходили первым?',
+        options: ['Звери', 'Три дня дождя', 'Папин олимпос'],
+        correctIndex: 1,
+        answerMedia: { type: 'photo', caption: 'Перед концертом', emoji: '🎵', gradient: 'linear-gradient(135deg, #dbeafe, #60a5fa)', src: '/photos/1st concert/IMG_1455.jpg' },
+      },
+      {
+        id: 'q2', text: 'Какой песни не было на концерте Зверей в Иваново?',
+        options: ['Снегопад', 'Напитки покрепче', 'Капканы', 'Дожди-пистолеты'],
+        correctIndex: 0,
+        answerMedia: { type: 'photo', caption: 'На концерте', emoji: '🎤', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/1st concert/IMG_6002.jpg' },
+      },
+    ],
+    gallery: [
       { type: 'photo', caption: 'Перед концертом', emoji: '🎵', gradient: 'linear-gradient(135deg, #dbeafe, #60a5fa)', src: '/photos/1st concert/IMG_1455.jpg' },
       { type: 'photo', caption: 'На концерте', emoji: '🎤', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/1st concert/IMG_6002.jpg' },
       { type: 'video', caption: 'Атмосфера 🔥', emoji: '🔥', gradient: 'linear-gradient(135deg, #fef3c7, #f59e0b)', src: '/photos/1st concert/IMG_6012.mp4' },
@@ -76,7 +151,8 @@ const timelineEvents: TimelineEvent[] = [
   },
   {
     id: '6', date: '2025-10-14', displayDate: '14 окт 2025', title: 'Маленькая мечта', emoji: '✨',
-    media: [
+    questions: [],
+    gallery: [
       { type: 'video', caption: 'Наша маленькая мечта', emoji: '✨', gradient: 'linear-gradient(135deg, #f3e8ff, #c084fc)', src: '/photos/small wish/IMG_6059.mp4' },
       { type: 'video', caption: 'Момент счастья', emoji: '🌟', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)', src: '/photos/small wish/IMG_6099.mp4' },
       { type: 'video', caption: 'Вместе навсегда', emoji: '💫', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/small wish/IMG_6101.mp4' },
@@ -84,7 +160,21 @@ const timelineEvents: TimelineEvent[] = [
   },
   {
     id: '7', date: '2025-11-22', displayDate: '22 ноя 2025', title: 'Первая поездка', emoji: '✈️',
-    media: [
+    questions: [
+      {
+        id: 'q1', text: 'Куда была наша первая совместная поездка?',
+        options: ['В Москву', 'В Лунево', 'В Ярославль', 'На бали'],
+        correctIndex: 2,
+        answerMedia: { type: 'photo', caption: 'Путешествие началось', emoji: '✈️', gradient: 'linear-gradient(135deg, #e0f2fe, #38bdf8)', src: '/photos/1st trip/IMG_0519.jpg' },
+      },
+      {
+        id: 'q2', text: 'Где Даша потеряла телефон в Луневке?',
+        options: ['На катке', 'По дороге до номера', 'В ресторане', 'На гуляниях'],
+        correctIndex: 3,
+        answerMedia: { type: 'photo', caption: 'В пути', emoji: '🚂', gradient: 'linear-gradient(135deg, #fef9c3, #eab308)', src: '/photos/1st trip/IMG_0532.jpg' },
+      },
+    ],
+    gallery: [
       { type: 'photo', caption: 'Путешествие началось', emoji: '✈️', gradient: 'linear-gradient(135deg, #e0f2fe, #38bdf8)', src: '/photos/1st trip/IMG_0519.jpg' },
       { type: 'photo', caption: 'В пути', emoji: '🚂', gradient: 'linear-gradient(135deg, #fef9c3, #eab308)', src: '/photos/1st trip/IMG_0532.jpg' },
       { type: 'photo', caption: 'Наша остановка', emoji: '🏔️', gradient: 'linear-gradient(135deg, #dcfce7, #22c55e)', src: '/photos/1st trip/IMG_0550.jpg' },
@@ -94,7 +184,15 @@ const timelineEvents: TimelineEvent[] = [
   },
   {
     id: '8', date: '2025-12-30', displayDate: '30 дек 2025 - 1 янв 2026', title: 'Новый год', emoji: '🎆',
-    media: [
+    questions: [
+      {
+        id: 'q1', text: 'Какого цвета был сноуборд у Даши на НГ?',
+        options: ['Красный', 'Черный', 'Зеленый', 'Синий'],
+        correctIndex: 3,
+        answerMedia: { type: 'photo', caption: 'Новый год вместе', emoji: '🎆', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/new year/IMG_6285.jpg' },
+      },
+    ],
+    gallery: [
       { type: 'photo', caption: 'Новый год вместе', emoji: '🎆', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/new year/IMG_6285.jpg' },
       { type: 'photo', caption: 'Наша фотография', emoji: '📸', gradient: 'linear-gradient(135deg, #fef3c7, #fde68a)', src: '/photos/new year/IMG_6287.JPG' },
       { type: 'photo', caption: 'Ещё один момент', emoji: '✨', gradient: 'linear-gradient(135deg, #e0e7ff, #a5b4fc)', src: '/photos/new year/IMG_6337.JPG' },
@@ -108,7 +206,21 @@ const timelineEvents: TimelineEvent[] = [
   },
   {
     id: '9', date: '2026-01-25', displayDate: '25 янв 2026', title: 'Новогодняя Москва', emoji: '🏙️',
-    media: [
+    questions: [
+      {
+        id: 'q1', text: 'Какой сериал мы смотрели, когда я заболел в Москве?',
+        options: ['Мы смотрели реалити', 'Кухня', 'Чернобыль'],
+        correctIndex: 2,
+        answerMedia: { type: 'photo', caption: 'Гуляли по Москве', emoji: '🏙️', gradient: 'linear-gradient(135deg, #dbeafe, #3b82f6)', src: '/photos/NY Moscow/IMG_1646.jpg' },
+      },
+      {
+        id: 'q2', text: 'Мы были в пушистой комнате в ...',
+        options: ['Первую поездку в Москву', 'Во вторую поездку в Москву'],
+        correctIndex: 1,
+        answerMedia: { type: 'photo', caption: 'Новогодняя столица', emoji: '🎄', gradient: 'linear-gradient(135deg, #dcfce7, #22c55e)', src: '/photos/NY Moscow/IMG_1793.jpg' },
+      },
+    ],
+    gallery: [
       { type: 'photo', caption: 'Гуляли по Москве', emoji: '🏙️', gradient: 'linear-gradient(135deg, #dbeafe, #3b82f6)', src: '/photos/NY Moscow/IMG_1646.jpg' },
       { type: 'photo', caption: 'Красная площадь', emoji: '🏛️', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/NY Moscow/IMG_1658.jpg' },
       { type: 'photo', caption: 'Новогодняя столица', emoji: '🎄', gradient: 'linear-gradient(135deg, #dcfce7, #22c55e)', src: '/photos/NY Moscow/IMG_1793.jpg' },
@@ -118,7 +230,15 @@ const timelineEvents: TimelineEvent[] = [
   },
   {
     id: '10', date: '2026-02-28', displayDate: '28 фев 2026', title: '6 месяцев', emoji: '💖',
-    media: [
+    questions: [
+      {
+        id: 'q1', text: 'Как мы отмечали 6 месяцев?',
+        options: ['Сидели в современнике', 'Занимались лепкой', 'Ходили в цони', 'Верны только А и Б', 'Верны только Б и В'],
+        correctIndex: 3,
+        answerMedia: { type: 'photo', caption: 'Полгода любви', emoji: '💖', gradient: 'linear-gradient(135deg, #fce7f3, #ec4899)', src: '/photos/6 months/IMG_3160.jpg' },
+      },
+    ],
+    gallery: [
       { type: 'photo', caption: 'Полгода любви', emoji: '💖', gradient: 'linear-gradient(135deg, #fce7f3, #ec4899)', src: '/photos/6 months/IMG_3160.jpg' },
       { type: 'photo', caption: 'Наше счастье', emoji: '😊', gradient: 'linear-gradient(135deg, #fef3c7, #f59e0b)', src: '/photos/6 months/IMG_3178.jpg' },
       { type: 'photo', caption: 'Полгода вместе', emoji: '💫', gradient: 'linear-gradient(135deg, #e0e7ff, #6366f1)', src: '/photos/6 months/IMG_3186.jpg' },
@@ -127,7 +247,8 @@ const timelineEvents: TimelineEvent[] = [
   },
   {
     id: '11', date: '2026-02-28', displayDate: '28 фев - 12 май 2026', title: 'Микс', emoji: '📸',
-    media: [
+    questions: [],
+    gallery: [
       { type: 'photo', caption: 'Наши будни', emoji: '☕', gradient: 'linear-gradient(135deg, #fef3c7, #f59e0b)', src: '/photos/Mix/IMG_3470.jpg' },
       { type: 'photo', caption: 'Повседневное счастье', emoji: '✨', gradient: 'linear-gradient(135deg, #dbeafe, #60a5fa)', src: '/photos/Mix/IMG_3607.jpg' },
       { type: 'photo', caption: 'Вместе', emoji: '💑', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/Mix/IMG_3721.jpg' },
@@ -137,14 +258,23 @@ const timelineEvents: TimelineEvent[] = [
   },
   {
     id: '12', date: '2026-05-12', displayDate: '12 май 2026', title: 'Мой ДР', emoji: '🎉',
-    media: [
+    questions: [],
+    gallery: [
       { type: 'photo', caption: 'Мой день рождения', emoji: '🎉', gradient: 'linear-gradient(135deg, #fce7f3, #f9a8d4)', src: '/photos/My bday/IMG_4113.jpg' },
       { type: 'photo', caption: 'Праздник', emoji: '🎂', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)', src: '/photos/My bday/IMG_4119.jpg' },
     ],
   },
   {
     id: '13', date: '2026-05-30', displayDate: '30 май 2026', title: '9 месяцев', emoji: '💗',
-    media: [
+    questions: [
+      {
+        id: 'q1', text: 'Что мы делали на 9 месяцев?',
+        options: ['Ходили на концерт', 'Сидели в манеки', 'Ходили в театр', 'Ничего'],
+        correctIndex: 2,
+        answerMedia: { type: 'photo', caption: '9 месяцев счастья', emoji: '💗', gradient: 'linear-gradient(135deg, #fecaca, #fb7185)', src: '/photos/9 months/IMG_4251.jpg' },
+      },
+    ],
+    gallery: [
       { type: 'photo', caption: '9 месяцев счастья', emoji: '💗', gradient: 'linear-gradient(135deg, #fecaca, #fb7185)', src: '/photos/9 months/IMG_4251.jpg' },
       { type: 'photo', caption: 'Наши дни', emoji: '☀️', gradient: 'linear-gradient(135deg, #fef3c7, #fbbf24)', src: '/photos/9 months/IMG_4255.jpg' },
       { type: 'photo', caption: 'Радость', emoji: '😊', gradient: 'linear-gradient(135deg, #e0e7ff, #6366f1)', src: '/photos/9 months/IMG_4266.jpg' },
@@ -152,7 +282,8 @@ const timelineEvents: TimelineEvent[] = [
   },
   {
     id: '14', date: '2026-06-01', displayDate: '1 июн 2026', title: 'Наше совместное лето', emoji: '☀️',
-    media: [
+    questions: [],
+    gallery: [
       { type: 'photo', caption: 'Лето — это мы', emoji: '☀️', gradient: 'linear-gradient(135deg, #fef9c3, #eab308)', src: '/photos/summer/IMG_4400.JPG' },
       { type: 'photo', caption: 'Жаркие деньки', emoji: '🌻', gradient: 'linear-gradient(135deg, #fce7f3, #f472b6)', src: '/photos/summer/IMG_4408.JPG' },
       { type: 'photo', caption: 'Наши приключения', emoji: '🌊', gradient: 'linear-gradient(135deg, #dbeafe, #3b82f6)', src: '/photos/summer/IMG_4452.JPG' },
@@ -190,17 +321,13 @@ const timelineEvents: TimelineEvent[] = [
   },
 ];
 
-function TimelineItem({ event, index, onClick }: { event: TimelineEvent; index: number; onClick: (e: TimelineEvent) => void }) {
+function TimelineItem({ event, onClick }: { event: TimelineEvent; onClick: (e: TimelineEvent) => void }) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-50px' });
 
   return (
     <motion.div
       ref={ref}
       className="timeline-item"
-      initial={{ opacity: 0, y: 30 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
       onClick={() => onClick(event)}
     >
       <div className="timeline-dot">
@@ -214,12 +341,95 @@ function TimelineItem({ event, index, onClick }: { event: TimelineEvent; index: 
   );
 }
 
+interface GalleryProps {
+  media: MediaItem[];
+  onOpenFullscreen: (m: MediaItem) => void;
+}
+
+function MediaCarousel({ media, onOpenFullscreen }: GalleryProps) {
+  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+
+  const nextMedia = () => setCurrentMediaIndex((prev) => (prev + 1) % media.length);
+  const prevMedia = () => setCurrentMediaIndex((prev) => (prev - 1 + media.length) % media.length);
+
+  if (media.length === 0) return null;
+
+  const item = media[currentMediaIndex];
+
+  return (
+    <div className="media-section">
+      <div className="media-main">
+        {media.length > 1 && (
+          <button className="media-nav media-prev" onClick={prevMedia}>‹</button>
+        )}
+        <div
+          className="media-display"
+          style={{ background: item.gradient }}
+          onClick={() => onOpenFullscreen(item)}
+        >
+          {item.type === 'video' ? (
+            item.src ? (
+              <video
+                src={getMediaUrl(item.src)}
+                className="media-video"
+                controls
+                playsInline
+                muted
+                preload="metadata"
+              />
+            ) : (
+              <span className="media-emoji">{item.emoji}</span>
+            )
+          ) : item.src ? (
+            <Image
+              src={getMediaUrl(item.src)}
+              alt={item.caption}
+              className="media-img"
+              fill
+              sizes="(max-width: 768px) 280px, 280px"
+              loading="lazy"
+            />
+          ) : (
+            <span className="media-emoji">{item.emoji}</span>
+          )}
+          {item.type === 'video' && !item.src && (
+            <span className="media-play-icon">▶</span>
+          )}
+          <span className="media-expand">⛶</span>
+        </div>
+        {media.length > 1 && (
+          <button className="media-nav media-next" onClick={nextMedia}>›</button>
+        )}
+      </div>
+
+      <p className="media-caption">{item.caption}</p>
+
+      {media.length > 1 && (
+        <div className="media-dots">
+          {media.map((_, i) => (
+            <button
+              key={i}
+              className={`media-dot${i === currentMediaIndex ? ' active' : ''}`}
+              onClick={() => setCurrentMediaIndex(i)}
+            >
+              {media[i].type === 'video' ? '▶' : ''}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
   const [selectedEvent, setSelectedEvent] = useState<TimelineEvent | null>(null);
-  const [currentMediaIndex, setCurrentMediaIndex] = useState(0);
+  const [phase, setPhase] = useState<ModalPhase>('question');
+  const [questionIndex, setQuestionIndex] = useState(0);
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [showError, setShowError] = useState(false);
   const [fullscreenMedia, setFullscreenMedia] = useState<MediaItem | null>(null);
   const [mounted, setMounted] = useState(false);
-  
+
   const particles = ['💕', '💗', '💖', '✨', '🌸', '💫'];
   const timelineEmojis = ['💕', '💗', '✨', '🌸', '💖', '🌷', '💫', '💝', '🌺', '⭐', '💞', '🌹', '💜', '🦋', '🌟'];
   const [particlesList, setParticlesList] = useState<{ id: number; emoji: string; left: number; delay: number; duration: number }[]>([]);
@@ -257,36 +467,66 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
     return () => observer.disconnect();
   }, [mounted]);
 
-  const handleEventClick = (event: TimelineEvent) => {
+  const initializeEvent = (event: TimelineEvent) => {
     setSelectedEvent(event);
-    setCurrentMediaIndex(0);
+    setQuestionIndex(0);
+    setSelectedOption(null);
+    setShowError(false);
+    setFullscreenMedia(null);
+    if (event.questions.length > 0) {
+      setPhase('question');
+    } else {
+      setPhase('gallery');
+    }
+  };
+
+  const handleEventClick = (event: TimelineEvent) => {
+    initializeEvent(event);
   };
 
   const handleClose = () => {
     setSelectedEvent(null);
+    setSelectedOption(null);
+    setShowError(false);
+    setFullscreenMedia(null);
   };
 
-  const nextMedia = () => {
+  const handleOptionSelect = (index: number) => {
     if (!selectedEvent) return;
-    setCurrentMediaIndex((prev) => (prev + 1) % selectedEvent.media.length);
+    const question = selectedEvent.questions[questionIndex];
+    if (index === question.correctIndex) {
+      setSelectedOption(index);
+      setShowError(false);
+      setPhase('reveal');
+    } else {
+      setSelectedOption(index);
+      setShowError(true);
+    }
   };
 
-  const prevMedia = () => {
+  const handleRevealNext = () => {
     if (!selectedEvent) return;
-    setCurrentMediaIndex((prev) => (prev - 1 + selectedEvent.media.length) % selectedEvent.media.length);
+    if (questionIndex + 1 < selectedEvent.questions.length) {
+      setQuestionIndex((prev) => prev + 1);
+      setSelectedOption(null);
+      setShowError(false);
+      setPhase('question');
+    } else {
+      setPhase('gallery');
+    }
   };
 
-  useEffect(() => {
-    if (!selectedEvent) return;
-    const nextIdx = (currentMediaIndex + 1) % selectedEvent.media.length;
-    const prevIdx = (currentMediaIndex - 1 + selectedEvent.media.length) % selectedEvent.media.length;
-    [selectedEvent.media[nextIdx], selectedEvent.media[prevIdx]].forEach((media) => {
-      if (media.src && media.type === 'photo') {
-        const img = document.createElement('img');
-        img.src = getMediaUrl(media.src);
-      }
-    });
-  }, [selectedEvent, currentMediaIndex]);
+  const isLastQuestion =
+    selectedEvent
+      ? questionIndex === selectedEvent.questions.length - 1
+      : true;
+
+  const question =
+    selectedEvent && selectedEvent.questions.length > 0
+      ? selectedEvent.questions[questionIndex]
+      : null;
+
+  const revealMedia = question ? question.answerMedia : null;
 
   if (!mounted) {
     return null;
@@ -330,15 +570,15 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
             </span>
           ))}
         </div>
-        {timelineEvents.map((event, index) => (
-          <TimelineItem key={event.id} event={event} index={index} onClick={handleEventClick} />
+        {timelineEvents.map((event) => (
+          <TimelineItem key={event.id} event={event} onClick={handleEventClick} />
         ))}
         <div ref={sentinelRef} style={{ height: '1px' }} />
       </div>
 
       {onNext && showContinue && (
-        <motion.button 
-          className="continue-btn" 
+        <motion.button
+          className="continue-btn"
           onClick={onNext}
           initial={{ opacity: 0, y: 50, x: '-50%' }}
           animate={{ opacity: 1, y: 0, x: '-50%' }}
@@ -349,7 +589,7 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
       )}
 
       <AnimatePresence>
-        {fullscreenMedia && selectedEvent && (
+        {fullscreenMedia && (
           <motion.div
             className="fullscreen-overlay"
             initial={{ opacity: 0 }}
@@ -424,75 +664,81 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
                 <span className="event-date">{selectedEvent.displayDate}</span>
               </div>
 
-              {selectedEvent.media.length > 0 && (
+              {phase === 'question' && question && (
+                <div className="quiz-section">
+                  <p className="quiz-question">{question.text}</p>
+                  {showError && (
+                    <p className="quiz-error">Попробуй ещё раз 🙈</p>
+                  )}
+                  <div className="quiz-options">
+                    {question.options.map((opt, i) => (
+                      <button
+                        key={i}
+                        className={`quiz-option${selectedOption === i ? ' selected' : ''}${showError && selectedOption === i ? ' wrong' : ''}${selectedOption === i && i === question.correctIndex ? ' right' : ''}`}
+                        onClick={() => handleOptionSelect(i)}
+                      >
+                        <span className="quiz-option-letter">{String.fromCharCode(1040 + i)}</span>
+                        <span className="quiz-option-text">{opt}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {phase === 'reveal' && revealMedia && (
                 <div className="media-section">
-                  <div className="media-main">
-                    {selectedEvent.media.length > 1 && (
-                      <button className="media-nav media-prev" onClick={prevMedia}>‹</button>
-                    )}
-                    <div
-                      className="media-display"
-                      style={{ background: selectedEvent.media[currentMediaIndex].gradient }}
-                      onClick={() => setFullscreenMedia(selectedEvent.media[currentMediaIndex])}
-                    >
-                      {selectedEvent.media[currentMediaIndex].type === 'video' ? (
-                        selectedEvent.media[currentMediaIndex].src ? (
-                          <video
-                            src={getMediaUrl(selectedEvent.media[currentMediaIndex].src)}
-                            className="media-video"
-                            controls
-                            playsInline
-                            muted
-                            preload="metadata"
-                          />
-                        ) : (
-                          <span className="media-emoji">{selectedEvent.media[currentMediaIndex].emoji}</span>
-                        )
-                      ) : selectedEvent.media[currentMediaIndex].src ? (
-                        <Image
-                          src={getMediaUrl(selectedEvent.media[currentMediaIndex].src)}
-                          alt={selectedEvent.media[currentMediaIndex].caption}
-                          className="media-img"
-                          fill
-                          sizes="(max-width: 768px) 280px, 280px"
-                          loading="lazy"
+                  <div
+                    className="media-display"
+                    style={{ background: revealMedia.gradient }}
+                    onClick={() => setFullscreenMedia(revealMedia)}
+                  >
+                    {revealMedia.type === 'video' ? (
+                      revealMedia.src ? (
+                        <video
+                          src={getMediaUrl(revealMedia.src)}
+                          className="media-video"
+                          controls
+                          playsInline
+                          muted
+                          preload="metadata"
                         />
                       ) : (
-                        <span className="media-emoji">{selectedEvent.media[currentMediaIndex].emoji}</span>
-                      )}
-                      {selectedEvent.media[currentMediaIndex].type === 'video' && !selectedEvent.media[currentMediaIndex].src && (
-                        <span className="media-play-icon">▶</span>
-                      )}
-                      <span className="media-expand">⛶</span>
-                    </div>
-                    {selectedEvent.media.length > 1 && (
-                      <button className="media-nav media-next" onClick={nextMedia}>›</button>
+                        <span className="media-emoji">{revealMedia.emoji}</span>
+                      )
+                    ) : revealMedia.src ? (
+                      <Image
+                        src={getMediaUrl(revealMedia.src)}
+                        alt={revealMedia.caption}
+                        className="media-img"
+                        fill
+                        sizes="(max-width: 768px) 280px, 280px"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span className="media-emoji">{revealMedia.emoji}</span>
                     )}
+                    <span className="media-expand">⛶</span>
                   </div>
-
-                  <p className="media-caption">{selectedEvent.media[currentMediaIndex].caption}</p>
-
-                  {selectedEvent.media.length > 1 && (
-                    <div className="media-dots">
-                      {selectedEvent.media.map((_, i) => (
-                        <button
-                          key={i}
-                          className={`media-dot${i === currentMediaIndex ? ' active' : ''}`}
-                          onClick={() => setCurrentMediaIndex(i)}
-                        >
-                          {selectedEvent.media[i].type === 'video' ? '▶' : ''}
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                  <motion.button
+                    className="quiz-next-btn"
+                    onClick={handleRevealNext}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                  >
+                    {isLastQuestion ? 'Смотреть все фото 💕' : 'Дальше →'}
+                  </motion.button>
                 </div>
+              )}
+
+              {phase === 'gallery' && (
+                <MediaCarousel media={selectedEvent.gallery} onOpenFullscreen={setFullscreenMedia} />
               )}
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-<style>{`
+      <style>{`
         .timeline-page {
           position: fixed;
           inset: 0;
@@ -736,7 +982,7 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           box-shadow: 0 0 10px rgba(249,168,212,0.6);
         }
 
-.timeline-item {
+        .timeline-item {
           display: flex;
           align-items: flex-start;
           gap: 16px;
@@ -882,6 +1128,97 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           color: #8aa8c2;
         }
 
+        .quiz-section {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 16px;
+        }
+
+        .quiz-question {
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: 1.4rem;
+          color: #6b8cae;
+          text-align: center;
+          margin: 0;
+          line-height: 1.3;
+        }
+
+        .quiz-error {
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: 1.1rem;
+          color: #ef4444;
+          margin: 0;
+          animation: pulse 0.4s ease;
+        }
+
+        .quiz-options {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          width: 100%;
+        }
+
+        .quiz-option {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          width: 100%;
+          padding: 12px 14px;
+          border-radius: 14px;
+          border: 2px solid rgba(147,197,253,0.4);
+          background: rgba(255,255,255,0.7);
+          cursor: pointer;
+          transition: all 0.2s;
+          text-align: left;
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: 1.1rem;
+          color: #6b8cae;
+        }
+
+        .quiz-option:hover {
+          border-color: rgba(249,168,212,0.8);
+          background: rgba(255,255,255,0.95);
+          transform: translateX(3px);
+        }
+
+        .quiz-option.selected {
+          border-color: rgba(147,197,253,0.9);
+          box-shadow: 0 0 12px rgba(147,197,253,0.4);
+        }
+
+        .quiz-option.wrong {
+          border-color: #f87171;
+          background: #fef2f2;
+          color: #b91c1c;
+          box-shadow: 0 0 12px rgba(248,113,113,0.4);
+        }
+
+        .quiz-option.right {
+          border-color: #4ade80;
+          background: #f0fdf4;
+          color: #15803d;
+          box-shadow: 0 0 12px rgba(74,222,128,0.4);
+        }
+
+        .quiz-option-letter {
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          background: rgba(236,114,182,0.15);
+          color: #be185d;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.95rem;
+          font-weight: 700;
+          flex-shrink: 0;
+        }
+
+        .quiz-option-text {
+          flex: 1;
+        }
+
         .media-section {
           display: flex;
           flex-direction: column;
@@ -1008,6 +1345,23 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
           background: rgba(147,197,253,0.8);
           border-color: rgba(147,197,253,0.9);
           box-shadow: 0 0 10px rgba(147,197,253,0.5);
+        }
+
+        .quiz-next-btn {
+          margin-top: 4px;
+          background: linear-gradient(135deg, #f9a8d4, #ec4899);
+          color: #fff;
+          border: none;
+          padding: 12px 28px;
+          border-radius: 24px;
+          font-family: var(--font-caveat), 'Caveat', Georgia, cursive;
+          font-size: 1.15rem;
+          cursor: pointer;
+          box-shadow: 0 6px 20px rgba(236,72,153,0.3);
+        }
+
+        .quiz-next-btn:hover {
+          transform: scale(1.03);
         }
 
         .fullscreen-overlay {
@@ -1217,7 +1571,7 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
 
           .event-card {
             padding: 20px 14px;
-            max-width: 320px;
+            max-width: 340px;
           }
 
           .event-card h2 {
@@ -1257,6 +1611,15 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
             width: clamp(220px, 85vw, 400px);
             height: clamp(220px, 50vh, 350px);
           }
+
+          .quiz-question {
+            font-size: 1.2rem;
+          }
+
+          .quiz-option {
+            font-size: 1rem;
+            padding: 10px 12px;
+          }
         }
 
         @media (max-width: 360px) {
@@ -1280,7 +1643,7 @@ export default function PhotoGallery({ onNext }: { onNext?: () => void }) {
 
           .event-card {
             padding: 16px 12px;
-            max-width: 280px;
+            max-width: 300px;
           }
 
           .media-display {
