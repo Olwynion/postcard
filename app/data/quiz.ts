@@ -212,6 +212,12 @@ export const timelineEvents: TimelineEvent[] = [
         correctIndex: 3,
         reveal: '/photos/new year/IMG_6548.JPG',
       },
+      {
+        id: 'q3', text: 'Что мы делали на улице в минус зимой?',
+        options: ['Жарили шашлыки', 'Купались в бассейне', 'Катались на коньках', 'Лепили снеговика'],
+        correctIndex: 1,
+        reveal: '/photos/new year/IMG_6437.JPG',
+      },
     ],
     gallery: [
       '/photos/new year/IMG_6285.jpg',
@@ -240,6 +246,12 @@ export const timelineEvents: TimelineEvent[] = [
         correctIndex: 1,
         reveal: '/photos/NY Moscow/IMG_1793.jpg',
       },
+      {
+        id: 'q3', text: 'Кого мы кормили в Новогодней Москве?',
+        options: ['Собаку', 'Альпаку', 'Овечку', 'Козу'],
+        correctIndex: 1,
+        reveal: '/photos/NY Moscow/IMG_2195.jpg',
+      },
     ],
     gallery: [
       '/photos/NY Moscow/IMG_1646.jpg',
@@ -258,6 +270,12 @@ export const timelineEvents: TimelineEvent[] = [
         correctIndex: 3,
         reveal: '/photos/6 months/IMG_3160.jpg',
       },
+      {
+        id: 'q2', text: 'Что написано на моём тебе подарке?',
+        options: ['Люблю тебя навсегда', 'Ты моё счастье', 'Спасибо, что ты есть', 'Любовь — это когда готовишь что-то особенное'],
+        correctIndex: 3,
+        reveal: '/photos/6 months/IMG_3160.jpg',
+      },
     ],
     gallery: [
       '/photos/6 months/IMG_3160.jpg',
@@ -268,7 +286,20 @@ export const timelineEvents: TimelineEvent[] = [
   },
   {
     id: '11', date: '2026-02-28', displayDate: '28 фев - 12 май 2026', title: 'Микс', emoji: '📸',
-    questions: [],
+    questions: [
+      {
+        id: 'q1', text: '«Прокатимся?» — а на чём мы катались в этот день?',
+        options: ['На велосипедах', 'На самокатах', 'На роликах', 'Пешком'],
+        correctIndex: 1,
+        reveal: '/photos/Mix/IMG_3721.jpg',
+      },
+      {
+        id: 'q2', text: 'Что мы делали последнее из пластилина?',
+        options: ['Фигурки', 'Картины'],
+        correctIndex: 1,
+        reveal: '/photos/Mix/IMG_3470.jpg',
+      },
+    ],
     gallery: [
       '/photos/Mix/IMG_3470.jpg',
       '/photos/Mix/IMG_3607.jpg',
