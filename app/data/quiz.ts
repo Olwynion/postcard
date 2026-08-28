@@ -142,6 +142,12 @@ export const timelineEvents: TimelineEvent[] = [
         correctIndex: 1,
         reveal: '/photos/1st concert/IMG_1455.jpg',
       },
+      {
+        id: 'q2', text: 'Что кричал зал в конце концерта?',
+        options: ['"Спасибо!"', '"Ра-си-я!"', '"Браво!"', '"Бис!"'],
+        correctIndex: 1,
+        reveal: '/photos/1st concert/IMG_6056.mp4',
+      },
     ],
     gallery: [
       '/photos/1st concert/IMG_1455.jpg',
@@ -166,6 +172,12 @@ export const timelineEvents: TimelineEvent[] = [
         options: ['Снегопад', 'Напитки покрепче', 'Капканы', 'Дожди-пистолеты'],
         correctIndex: 0,
         reveal: '/photos/small wish/IMG_6059.mp4',
+      },
+      {
+        id: 'q2', text: 'Какую песню Зверей пел зал в конце?',
+        options: ['Снегопад', 'Напитки покрепче', 'Районы-кварталы', 'Капканы'],
+        correctIndex: 2,
+        reveal: '/photos/small wish/IMG_006137.mp4',
       },
     ],
     gallery: [
@@ -276,6 +288,12 @@ export const timelineEvents: TimelineEvent[] = [
         correctIndex: 3,
         reveal: '/photos/6 months/IMG_3160.jpg',
       },
+      {
+        id: 'q3', text: 'Что мы слепили на гончарном круге?',
+        options: ['Тарелку', 'Кружечку', 'Вазу', 'Свисток'],
+        correctIndex: 1,
+        reveal: '/photos/6 months/IMG_3186.jpg',
+      },
     ],
     gallery: [
       '/photos/6 months/IMG_3160.jpg',
@@ -310,7 +328,14 @@ export const timelineEvents: TimelineEvent[] = [
   },
   {
     id: '12', date: '2026-05-12', displayDate: '12 май 2026', title: 'Мой ДР', emoji: '🎉',
-    questions: [],
+    questions: [
+      {
+        id: 'q1', text: 'С чего я плакал на мой ДР?',
+        options: ['С подарка-квиза', 'С поздравительной открытки', 'С торта', 'С альбомчика, который ты сделала'],
+        correctIndex: 3,
+        reveal: '/photos/My bday/IMG_4113.jpg',
+      },
+    ],
     gallery: [
       '/photos/My bday/IMG_4113.jpg',
       '/photos/My bday/IMG_4119.jpg',
@@ -358,6 +383,12 @@ export const timelineEvents: TimelineEvent[] = [
         options: ['Шашлык', 'Шаурма', 'Сладкая вата', 'Арбуз'],
         correctIndex: 3,
         reveal: '/photos/summer/IMG_4408.JPG',
+      },
+      {
+        id: 'q5', text: 'На чём мы плавали у берега?',
+        options: ['Доске для сёрфинга', 'Сапбордах', 'Виндсёрфинге', 'Катамаране'],
+        correctIndex: 1,
+        reveal: '/photos/summer/IMG_9931.JPG',
       },
     ],
     gallery: [
