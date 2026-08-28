@@ -303,7 +303,32 @@ export const timelineEvents: TimelineEvent[] = [
   },
   {
     id: '14', date: '2026-06-01', displayDate: '1 июн 2026', title: 'Наше совместное лето', emoji: '☀️',
-    questions: [],
+    questions: [
+      {
+        id: 'q1', text: 'Какие миньоны нам попались в МСК первыми?',
+        options: ['Отто и Стив', 'Боб и Кевин', 'Отто и Боб', 'Стив и Кевин'],
+        correctIndex: 2,
+        reveal: '/photos/summer/IMG_5948.JPG',
+      },
+      {
+        id: 'q2', text: 'Что нам попалось в Маке на Бали?',
+        options: ['Рюкзак чек-пук', 'Чек-пуки', 'Миньоны', 'Ничего'],
+        correctIndex: 0,
+        reveal: '/photos/summer/IMG_5710.JPG',
+      },
+      {
+        id: 'q3', text: 'Кто был в облаках?',
+        options: ['Я, ты, Вика, Данек', 'Я, ты, Данек, Вика, Влад', 'Ты, я, Вика, Таня, Влад', 'Я, ты, Вика, Данек, Таня'],
+        correctIndex: 3,
+        reveal: '/photos/summer/IMG_4738.JPG',
+      },
+      {
+        id: 'q4', text: 'Что было вкусненького на дне города Кохма?',
+        options: ['Шашлык', 'Шаурма', 'Сладкая вата', 'Арбуз'],
+        correctIndex: 3,
+        reveal: '/photos/summer/IMG_4408.JPG',
+      },
+    ],
     gallery: [
       '/photos/summer/IMG_4400.JPG',
       '/photos/summer/IMG_4408.JPG',
