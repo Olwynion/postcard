@@ -105,7 +105,7 @@ export const timelineEvents: TimelineEvent[] = [
         id: 'q2', text: 'Что мы делали на месяц отношений?',
         options: ['Сидели дома', 'Просто гуляли', 'Ходили вкусно покушать', 'Ходили за зарплатой в столбар'],
         correctIndex: 3,
-        reveal: '/photos/1st month/IMG_1685.jpg',
+        reveal: '/photos/1st month/IMG_1733.jpg',
       },
     ],
     gallery: [
@@ -123,7 +123,7 @@ export const timelineEvents: TimelineEvent[] = [
         id: 'q1', text: 'Кто пришёл поздравлять тебя в 12 ночи?',
         options: ['Данек, Алина, Ярик, Я', 'Данек, Алина, Лева, Ярик, Я', 'Алина, Лева, Ярик, Я', 'Данек, Алина, Лева, Ярик, Я, т-фест'],
         correctIndex: 3,
-        reveal: '/photos/your bday/IMG_1570.jpg',
+        reveal: '/photos/your bday/IMG_1671.jpg',
       },
     ],
     gallery: [
@@ -140,7 +140,7 @@ export const timelineEvents: TimelineEvent[] = [
         id: 'q1', text: 'На какой концерт мы сходили первым?',
         options: ['Звери', 'Три дня дождя', 'Папин олимпос'],
         correctIndex: 1,
-        reveal: '/photos/1st concert/IMG_1455.jpg',
+        reveal: '/photos/1st concert/IMG_6002.jpg',
       },
       {
         id: 'q2', text: 'Что кричал зал в конце концерта?',
@@ -216,13 +216,13 @@ export const timelineEvents: TimelineEvent[] = [
         id: 'q1', text: 'Какого цвета был сноуборд у Даши на НГ?',
         options: ['Красный', 'Черный', 'Зеленый', 'Синий'],
         correctIndex: 3,
-        reveal: '/photos/new year/IMG_6285.jpg',
+        reveal: '/photos/new year/IMG_6428.jpg',
       },
       {
         id: 'q2', text: 'Где Даша потеряла телефон в Луневке?',
         options: ['На катке', 'По дороге до номера', 'В ресторане', 'На гуляниях'],
         correctIndex: 3,
-        reveal: '/photos/new year/IMG_6548.JPG',
+        reveal: '/photos/new year/IMG_1363.jpg',
       },
       {
         id: 'q3', text: 'Что мы делали на улице в минус зимой?',
@@ -256,7 +256,7 @@ export const timelineEvents: TimelineEvent[] = [
         id: 'q2', text: 'Мы были в пушистой комнате в ...',
         options: ['Первую поездку в Москву', 'Во вторую поездку в Москву'],
         correctIndex: 1,
-        reveal: '/photos/NY Moscow/IMG_1793.jpg',
+        reveal: '/photos/NY Moscow/IMG_2692.jpg',
       },
       {
         id: 'q3', text: 'Кого мы кормили в Новогодней Москве?',
@@ -280,7 +280,7 @@ export const timelineEvents: TimelineEvent[] = [
         id: 'q1', text: 'Как мы отмечали 6 месяцев?',
         options: ['Сидели в современнике', 'Занимались лепкой', 'Ходили в цони', 'Верны только А и Б', 'Верны только Б и В'],
         correctIndex: 3,
-        reveal: '/photos/6 months/IMG_3160.jpg',
+        reveal: '/photos/6 months/IMG_3178.jpg',
       },
       {
         id: 'q2', text: 'Что написано на моём тебе подарке?',
@@ -348,7 +348,7 @@ export const timelineEvents: TimelineEvent[] = [
         id: 'q1', text: 'Что мы делали на 9 месяцев?',
         options: ['Ходили на концерт', 'Сидели в манеки', 'Ходили в театр', 'Ничего'],
         correctIndex: 2,
-        reveal: '/photos/9 months/IMG_4251.jpg',
+        reveal: '/photos/9 months/IMG_4255.jpg',
       },
     ],
     gallery: [
